@@ -1,0 +1,2 @@
+include ':app'
+rootProject.name = "chessstudyappver1.1"
