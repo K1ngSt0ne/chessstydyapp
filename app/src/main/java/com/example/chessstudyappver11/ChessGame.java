@@ -18,6 +18,7 @@ public class ChessGame {
     private static final Player BLACK_PLAYER = Player.BLACK;
     private final String TAG = "ChessGame";
     private Player turnPlayer = Player.WHITE;
+    boolean isCheckKing = false;
 
     private ArrayList<ChessPiece> piecesBox = new ArrayList<>();
     private ArrayList<ChessPiece> takingPiecesBox = new ArrayList<>();
@@ -99,10 +100,7 @@ public class ChessGame {
         return true;
     }
 
-    private boolean canTake(Square from, Square to)
-    {
-        return false;
-    }
+
 
     private boolean isCheck(ChessPiece piece) {
         ChessPiece pieceKing = null;
@@ -141,10 +139,17 @@ public class ChessGame {
                     (isClearHorizontallyBetween(new Square(piece.getColumn(), piece.getRow()), new Square(pieceKing.getColumn(), pieceKing.getRow())));
 
         }
+        if (piece.getChessman()==Chessman.PAWN)
+            return canPawnMove(new Square(piece.getColumn(),piece.getRow()), new Square(pieceKing.getColumn(),pieceKing.getRow()));
         return false;
     }
 
     private boolean isCheckMate(ChessPiece piece)
+    {
+
+        return false;
+    }
+    private boolean canProtect()
     {
 
         return false;
@@ -159,27 +164,80 @@ public class ChessGame {
 
 
     private boolean canPawnMove(Square from, Square to) {
-        if (from.getColumn() == to.getColumn()) {
-            ChessPiece piecePlayer = pieceAt(from);
-            if (piecePlayer != null) {
-                int fromRow = from.getRow();
-                int toRow = to.getRow();
-                if (piecePlayer.getPlayer() == WHITE_PLAYER) {
-                    if (fromRow < 3) {
-                        return toRow == 2 || toRow == 3;
-                    } else
-                        return toRow == fromRow + 1;
 
-                } else if (piecePlayer.getPlayer() == BLACK_PLAYER) {
-                    if (fromRow > 5) {
-                        return toRow == 5 || toRow == 4;
-                    } else
-                        return toRow == fromRow - 1;
+        ChessPiece piecePlayer = pieceAt(from);
+        ChessPiece enemyPiece = pieceAt(to);
+        if (piecePlayer!=null)
+        {
+            int fromRow = from.getRow();
+            int toRow = to.getRow();
+            int fromColumn = from.getColumn();
+            int toColumn = to.getColumn();
+            if (piecePlayer.getPlayer()==WHITE_PLAYER)
+            {
+                if (from.getColumn()==to.getColumn())
+                {
+                    if (enemyPiece!=null)
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        Log.d(TAG, "Move");
+                        if (fromRow < 3) {
+                            return toRow == 2 || toRow == 3;
+                        } else
+                            return toRow == fromRow + 1;
+                    }
+                }
+                else
+                {
+                    if (enemyPiece==null)
+                        return false;
+                    else
+                        {
+                           if ((fromColumn==toColumn+1)&&(fromRow+1==toRow))
+                           {
+                               return toColumn == fromColumn - 1 && toRow==fromRow+1;
+                           }
+                           else if ((fromColumn==toColumn-1)&&(fromRow+1==toRow))
+                               return toColumn == fromColumn+1 && toRow==fromRow+1;
+                        }
+                }
+
+            }
+            else if (piecePlayer.getPlayer()==BLACK_PLAYER)
+            {
+                if (from.getColumn()==to.getColumn())
+                {
+                    if (enemyPiece!=null)
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        Log.d(TAG, "Move");
+                        if (fromRow > 5) {
+                            return toRow == 5 || toRow == 4;
+                        } else
+                            return toRow == fromRow - 1;
+                    }
+                }
+                else
+                {
+                    if (enemyPiece==null)
+                        return false;
+                    else
+                    {
+                        if ((fromColumn==toColumn+1)&&(fromRow-1==toRow))
+                        {
+                            return toColumn == fromColumn - 1 && toRow==fromRow-1;
+                        }
+                        else if ((fromColumn==toColumn-1)&&(fromRow-1==toRow))
+                            return toColumn == fromColumn+1 && toRow==fromRow-1;
+                    }
                 }
             }
-
-            //Сделать единую функцию, с клеткой
-            //в зависимости от цвета игрока, поднимать или опускать клетку
         }
         return false;
     }
@@ -225,13 +283,23 @@ public class ChessGame {
     private boolean canMove(Square from, Square to) {
         //проверить на игрока и что его ход
         ChessPiece piecePlayer = pieceAt(from.getColumn(), from.getRow());
+        ChessPiece kingPiece = pieceAt(to.getColumn(), to.getRow());
+
         if ((from.getColumn() == to.getColumn() && from.getRow() == to.getRow()) || (piecePlayer.getPlayer() != turnPlayer))
             return false;
         else {
+            if (kingPiece!=null)
+            {
+                if (kingPiece.getChessman()==Chessman.KING)
+                    return false;
+            }
             ChessPiece piece = pieceAt(from);
             switch (piece.getChessman()) {
                 case KING:
-                    return canKingMove(from, to);
+                    if (isCheckKing)
+                        return false;
+                    else
+                        return canKingMove(from, to);
                 case PAWN:
                     return canPawnMove(from, to);
                 case ROOK:
@@ -242,6 +310,7 @@ public class ChessGame {
                     return canBishopMove(from, to);
                 case KHIGHT:
                     return canKnightMove(from, to);
+
 
             }
         }
@@ -257,9 +326,12 @@ public class ChessGame {
             if (testpiece != null) {
                 if (isCheck(testpiece))
                 {
+                    isCheckKing = true;
                     //здесь добавить проверку на мат
                     Log.d(TAG, "Check!!");
                 }
+                else
+                    isCheckKing=false;
             }
             switchPlayer();
 
@@ -281,11 +353,8 @@ public class ChessGame {
 
             }
         }
-       // if (canTake(new Square(fromCol, fromRow), new Square(toCol,toRow)))
-     //   {
-            piecesBox.remove(movingPiece);
-     //   }
 
+        piecesBox.remove(movingPiece);
         movingPiece.setColumn(toCol);
         movingPiece.setRow(toRow);
         addPiece(movingPiece);
