@@ -11,22 +11,22 @@ import static java.lang.Math.abs;
 
 public class ChessGame {
 
-    //проверка на мат: перебирать всес фигуры противника
-    //ссылка: https://stackoverflow.com/questions/21622677/computing-checkmate-correctly
+
 
     private static final Player WHITE_PLAYER = Player.WHITE;
     private static final Player BLACK_PLAYER = Player.BLACK;
     private final String TAG = "ChessGame";
     private Player turnPlayer = Player.WHITE;
-    boolean isCheckKing = false;
+    private Player turnSecondBoardPlayer;
+    boolean whiteKingCheck = false;
+    boolean blackKingCheck = false;
+    boolean endGame = false;
 
     private ArrayList<ChessPiece> piecesBox = new ArrayList<>();
-    private ArrayList<ChessPiece> takingPiecesBox = new ArrayList<>();
+    private ArrayList<ChessPiece> nextTurnPiecesBox = new ArrayList<>();
     {
         reset();
         // Log.d(TAG, String.valueOf(piecesBox.size()));
-        // movePiece(0, 0, 1, 6);
-        //  movePiece(1,7,1,4);
 
     }
 
@@ -102,25 +102,57 @@ public class ChessGame {
 
 
 
-    private boolean isCheck(ChessPiece piece) {
+    private boolean isCheck(ArrayList<ChessPiece> figureList) {
         ChessPiece pieceKing = null;
+        pieceKing = findEnemyKing(turnPlayer);
+        if (checkAllFigure(turnPlayer,pieceKing, figureList))
+            return true;
+        return false;
+
+    }
+
+    private ChessPiece findEnemyKing(Player turn){
+        ChessPiece pKing = null;
         for (ChessPiece piecePB : piecesBox) {
             //костыльная проверка на то, чей ход
             //если ход белых ищем черного короля
             //иначе ищем белого
             //добавить в отедлньый метод либо придумать как это сдлеа
 
-            if (turnPlayer==Player.WHITE)
+            if (turn==Player.WHITE)
             {
                 if ((piecePB.getChessman() == Chessman.KING)&&(piecePB.getPlayer()== Player.BLACK))
-                    pieceKing = piecePB;
+                    pKing = piecePB;
             }
             else
             {
                 if ((piecePB.getChessman() == Chessman.KING)&&(piecePB.getPlayer()== Player.WHITE))
-                    pieceKing = piecePB;
+                    pKing = piecePB;
             }
         }
+        return pKing;
+    }
+    private boolean checkAllFigure(Player turn, ChessPiece pieceKing, ArrayList<ChessPiece> figureList)
+    {
+        for (ChessPiece piece1: figureList)
+        {
+            if ((turn==WHITE_PLAYER)&&(piece1.getPlayer()==Player.WHITE))
+            {
+                if(checkIsCheck(piece1, pieceKing))
+                    return true;
+            }
+            else if ((turn==BLACK_PLAYER)&(piece1.getPlayer()==Player.BLACK))
+            {
+                if(checkIsCheck(piece1, pieceKing))
+                    return true;
+            }
+
+        }
+        return false;
+    }
+
+    private boolean checkIsCheck(ChessPiece piece, ChessPiece pieceKing)
+    {
         if (piece.getChessman() == Chessman.BISHOP) {
             return isClearDiagonally(new Square(piece.getColumn(), piece.getRow()), new Square(pieceKing.getColumn(), pieceKing.getRow()));
         }
@@ -133,8 +165,6 @@ public class ChessGame {
                     || (isClearHorizontallyBetween(new Square(piece.getColumn(), piece.getRow()), new Square(pieceKing.getColumn(), pieceKing.getRow()))));
         }
         if (piece.getChessman() == Chessman.ROOK) {
-            //на клетку назначения! а не отправления
-            //Log.d(TAG, "Check!!");
             return (isClearVerticallyBetween(new Square(piece.getColumn(), piece.getRow()), new Square(pieceKing.getColumn(), pieceKing.getRow()))) ||
                     (isClearHorizontallyBetween(new Square(piece.getColumn(), piece.getRow()), new Square(pieceKing.getColumn(), pieceKing.getRow())));
 
@@ -144,16 +174,6 @@ public class ChessGame {
         return false;
     }
 
-    private boolean isCheckMate(ChessPiece piece)
-    {
-
-        return false;
-    }
-    private boolean canProtect()
-    {
-
-        return false;
-    }
 
     private boolean canKnightMove(Square from, Square to) {
         //Правило: либо на две клетки по вертикали (вверх вниз) + на одну клетку влево/вправо
@@ -183,7 +203,6 @@ public class ChessGame {
                     }
                     else
                     {
-                        Log.d(TAG, "Move");
                         if (fromRow < 3) {
                             return toRow == 2 || toRow == 3;
                         } else
@@ -216,7 +235,6 @@ public class ChessGame {
                     }
                     else
                     {
-                        Log.d(TAG, "Move");
                         if (fromRow > 5) {
                             return toRow == 5 || toRow == 4;
                         } else
@@ -252,9 +270,11 @@ public class ChessGame {
     }
 
     private boolean canBishopMove(Square from, Square to) {
-        //подфиксить движение по диагонали
         if (abs(from.getColumn() - to.getColumn()) == abs(from.getRow() - to.getRow())) {
-            return isClearDiagonally(from, to);
+           /* if ((whiteKingCheck)||(blackKingCheck))
+                return false;
+            else*/
+                return isClearDiagonally(from, to);
         }
         return false;
     }
@@ -273,71 +293,103 @@ public class ChessGame {
     }
 
     //переключение игрока
-    public void switchPlayer() {
-        if (turnPlayer == Player.WHITE)
-            turnPlayer = Player.BLACK;
+    public Player switchPlayer(Player playerTurn) {
+        if (playerTurn == Player.WHITE)
+            playerTurn = Player.BLACK;
         else
-            turnPlayer = Player.WHITE;
+            playerTurn = Player.WHITE;
+        return playerTurn;
     }
 
     private boolean canMove(Square from, Square to) {
         //проверить на игрока и что его ход
         ChessPiece piecePlayer = pieceAt(from.getColumn(), from.getRow());
         ChessPiece kingPiece = pieceAt(to.getColumn(), to.getRow());
-
         if ((from.getColumn() == to.getColumn() && from.getRow() == to.getRow()) || (piecePlayer.getPlayer() != turnPlayer))
             return false;
         else {
+            //Сделать копию доски с новым ходом, если белые дают шах, то запрещаем ход иначе меняем на копию
             if (kingPiece!=null)
             {
                 if (kingPiece.getChessman()==Chessman.KING)
                     return false;
             }
             ChessPiece piece = pieceAt(from);
-            switch (piece.getChessman()) {
-                case KING:
-                    if (isCheckKing)
-                        return false;
-                    else
+
+
+                switch (piece.getChessman()) {
+                    case KING:
                         return canKingMove(from, to);
-                case PAWN:
-                    return canPawnMove(from, to);
-                case ROOK:
-                    return canRookMove(from, to);
-                case QUEEN:
-                    return canQueenMove(from, to);
-                case BISHOP:
-                    return canBishopMove(from, to);
-                case KHIGHT:
-                    return canKnightMove(from, to);
-
-
+                    case PAWN:
+                        return canPawnMove(from, to);
+                    case ROOK:
+                        return canRookMove(from, to);
+                    case QUEEN:
+                        return canQueenMove(from, to);
+                    case BISHOP:
+                        return canBishopMove(from, to);
+                    case KHIGHT:
+                        return canKnightMove(from, to);
             }
         }
 
         return true;
     }
+    private boolean secondBoard(ArrayList<ChessPiece> figureList)
+    {
+        turnSecondBoardPlayer=turnPlayer;
+        turnSecondBoardPlayer=switchPlayer(turnSecondBoardPlayer);
+            if (checkAllFigure(turnSecondBoardPlayer,findEnemyKing(turnSecondBoardPlayer),figureList))
+                return true;
+        return false;
+    }
+
+
 
     void movePiece(Square from, Square to) {
         //добавить проверку что фигура может ходить (через canMove)
+        nextTurnPiecesBox=new ArrayList<ChessPiece>(piecesBox);
         if (canMove(from, to)) {
             movePiece(from.getColumn(), from.getRow(), to.getColumn(), to.getRow());
-            ChessPiece testpiece = pieceAt(to);
-            if (testpiece != null) {
-                if (isCheck(testpiece))
-                {
-                    isCheckKing = true;
-                    //здесь добавить проверку на мат
-                    Log.d(TAG, "Check!!");
+            if (secondBoard(piecesBox))
+            {
+                Log.d(TAG, "БАН Н! ТАК ХОДИТЬ НЕЛЬЗЯ!");
+                ChessPiece chessKing = pieceAt(to);
+                if (chessKing.getChessman() == Chessman.KING) {
+                    Log.d(TAG,"BAN!");
+                    endGame=true;
                 }
-                else
-                    isCheckKing=false;
+                else {
+                    movePiece(to.getColumn(),to.getRow(), from.getColumn(), from.getRow());
+                    piecesBox=new ArrayList<>(nextTurnPiecesBox);
+                }
             }
-            switchPlayer();
-
+            else {
+                if ((turnPlayer==WHITE_PLAYER)&&(isCheck(piecesBox)))
+                {
+                    Log.d(TAG, "Black king need protect!");
+                    blackKingCheck=true;
+                }
+                else if ((turnPlayer==BLACK_PLAYER)&&(isCheck(piecesBox)))
+                {
+                    Log.d(TAG, "White king need protect!");
+                    whiteKingCheck=true;
+                }
+                else {
+                    blackKingCheck=false;
+                    whiteKingCheck=false;
+                }
+                turnPlayer= switchPlayer(turnPlayer);
+            }
         }
-
     }
+
+
+
+
+
+
+
 
     private void movePiece(Integer fromCol, Integer fromRow, Integer toCol, Integer toRow) {
 
@@ -399,5 +451,11 @@ public class ChessGame {
         return null;
     }
 
+    public boolean isEndGame() {
+        return endGame;
+    }
 
+    public void setEndGame(boolean endGame) {
+        this.endGame = endGame;
+    }
 }

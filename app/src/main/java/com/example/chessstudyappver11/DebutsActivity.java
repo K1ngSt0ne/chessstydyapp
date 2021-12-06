@@ -3,17 +3,21 @@ package com.example.chessstudyappver11;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.widget.TextView;
 
 public class DebutsActivity extends AppCompatActivity implements ChessDelegate{
 
     ChessView mChessView;
     ChessGame chessGame = new ChessGame();
+    TextView statusBar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_debuts);
+        statusBar = findViewById(R.id.textViewStatusBar);
         mChessView = findViewById(R.id.chess_view);
         mChessView.mChessDelegate=this;
+
         // setContentView(new ChessView(this));
     }
 
@@ -26,7 +30,16 @@ public class DebutsActivity extends AppCompatActivity implements ChessDelegate{
     @Override
     public void movePiece(Square from, Square to) {
             chessGame.movePiece(from,to);
-            mChessView = findViewById(R.id.chess_view);
-            mChessView.invalidate();
+            if (chessGame.isEndGame())
+            {
+                statusBar.setText("Вы проиграли");
+            }
+            else
+            {
+                mChessView = findViewById(R.id.chess_view);
+                mChessView.invalidate();
+            }
+
+
     }
 }
