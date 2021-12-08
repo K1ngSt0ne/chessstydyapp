@@ -132,6 +132,7 @@ public class ChessGame {
         }
         return pKing;
     }
+
     private boolean checkAllFigure(Player turn, ChessPiece pieceKing, ArrayList<ChessPiece> figureList)
     {
         for (ChessPiece piece1: figureList)
@@ -181,7 +182,6 @@ public class ChessGame {
         return abs(from.getColumn() - to.getColumn()) == 2 && abs(from.getRow() - to.getRow()) == 1 ||
                 abs(from.getColumn() - to.getColumn()) == 1 && abs(from.getRow() - to.getRow()) == 2;
     }
-
 
     private boolean canPawnMove(Square from, Square to) {
 
@@ -271,9 +271,6 @@ public class ChessGame {
 
     private boolean canBishopMove(Square from, Square to) {
         if (abs(from.getColumn() - to.getColumn()) == abs(from.getRow() - to.getRow())) {
-           /* if ((whiteKingCheck)||(blackKingCheck))
-                return false;
-            else*/
                 return isClearDiagonally(from, to);
         }
         return false;
@@ -335,6 +332,7 @@ public class ChessGame {
 
         return true;
     }
+
     private boolean secondBoard(ArrayList<ChessPiece> figureList)
     {
         turnSecondBoardPlayer=turnPlayer;
@@ -347,33 +345,40 @@ public class ChessGame {
 
 
     void movePiece(Square from, Square to) {
-        //добавить проверку что фигура может ходить (через canMove)
         nextTurnPiecesBox=new ArrayList<ChessPiece>(piecesBox);
         if (canMove(from, to)) {
             movePiece(from.getColumn(), from.getRow(), to.getColumn(), to.getRow());
             if (secondBoard(piecesBox))
             {
                 Log.d(TAG, "БАН Н! ТАК ХОДИТЬ НЕЛЬЗЯ!");
-                ChessPiece chessKing = pieceAt(to);
-                if (chessKing.getChessman() == Chessman.KING) {
-                    Log.d(TAG,"BAN!");
-                    endGame=true;
-                }
-                else {
-                    movePiece(to.getColumn(),to.getRow(), from.getColumn(), from.getRow());
-                    piecesBox=new ArrayList<>(nextTurnPiecesBox);
-                }
+                movePiece(to.getColumn(),to.getRow(), from.getColumn(), from.getRow());
+                piecesBox=new ArrayList<>(nextTurnPiecesBox);
+
+
             }
+            // проверять надо на шахах
             else {
                 if ((turnPlayer==WHITE_PLAYER)&&(isCheck(piecesBox)))
                 {
-                    Log.d(TAG, "Black king need protect!");
-                    blackKingCheck=true;
+                    if (checkMate(findEnemyKing(turnPlayer)))
+                        Log.d(TAG, "ВАМ МАТ!");
+                    else
+                    {
+                        Log.d(TAG, "Black king need protect!");
+                        blackKingCheck=true;
+                    }
+
                 }
                 else if ((turnPlayer==BLACK_PLAYER)&&(isCheck(piecesBox)))
                 {
-                    Log.d(TAG, "White king need protect!");
-                    whiteKingCheck=true;
+                    if (checkMate(findEnemyKing(turnPlayer)))
+                        Log.d(TAG, "ВАМ МАТ!");
+                    else
+                    {
+                        Log.d(TAG, "White king need protect!");
+                        whiteKingCheck=true;
+                    }
+
                 }
                 else {
                     blackKingCheck=false;
@@ -383,6 +388,63 @@ public class ChessGame {
             }
         }
     }
+    boolean checkMate(ChessPiece kingPiece) {
+        if (kingPiece.getChessman() == Chessman.KING) {
+            int check = 0;
+            ArrayList<Pair> possibleMoves= new ArrayList<>();
+            //найдем возможные ходы для короля и добавим их в массив
+            for (int i = kingPiece.getRow()-1; i <= kingPiece.getRow() + 1; i++) {
+                for (int j = kingPiece.getColumn() - 1; j <= kingPiece.getColumn() + 1; j++) {
+                    if ((i>=0&&i<8)&&(j>=0&&j<8))
+                    {
+                        if (canKingMove(new Square(kingPiece.getColumn(), kingPiece.getRow()), new Square(j, i)))
+                            possibleMoves.add(new Pair(i,j));
+                    }
+
+                }
+            }
+            ArrayList<Pair> possibleMovesAfterCheck= new ArrayList<>();
+            for (Pair pair : possibleMoves)
+            {
+                ChessPiece piece = pieceAt(pair.getColumn(),pair.getRow());
+                if (piece==null)
+                    possibleMovesAfterCheck.add(pair);
+            }
+            for (Pair pair: possibleMovesAfterCheck)
+            {
+                ChessPiece checkField = pieceAt(new Square(pair.getColumn(), pair.getRow()));
+                for (ChessPiece piece : piecesBox)
+                {
+                    if ((kingPiece.getPlayer()==WHITE_PLAYER)&&(piece.getPlayer()==BLACK_PLAYER))
+                    {
+                        if(checkIsCheck(piece,checkField))
+                            Log.d(TAG, "ТЕБЕ СЮДА НЕЛЬЗЯ!!");
+                    }
+                    else if ((kingPiece.getPlayer()==BLACK_PLAYER)&(piece.getPlayer()==WHITE_PLAYER))
+                    {
+                        if(checkIsCheck(piece,checkField))
+                            Log.d(TAG, "ТЕБЕ СЮДА НЕЛЬЗЯ!!");
+                    }
+                }
+            }
+            //мы нашли свободные поля
+            //теперь необходимо проверить бьются ли эти поля, и если да, то можно ли их защитить
+            //для этого
+            //нужно прорверить фигуры противоположного игрока , могут ли они атаковать эту клетку (метод secondboard)
+            //если да, то нужно перебрать все фигуры игрока который под шахом, и проверить, можеит ли фигура достичь из своей текущей позиции до данной клетки
+            //если да - то надо закрываться иначе ход невозмодный
+            //елси достичь не может, то мат
+
+        }
+        return false;
+    }
+
+
+
+
+
+
+
 
 
 
