@@ -397,6 +397,7 @@ public class ChessGame {
     }
 
     boolean checkMate(ChessPiece kingPiece) {
+
         if (kingPiece.getChessman() == Chessman.KING) {
             ArrayList<Pair> possibleMoves = new ArrayList<>();
             //найдем возможные ходы для короля и добавим их в массив
@@ -406,7 +407,6 @@ public class ChessGame {
                         if (canKingMove(new Square(kingPiece.getColumn(), kingPiece.getRow()), new Square(j, i)))
                             possibleMoves.add(new Pair(i, j));
                     }
-
                 }
             }
             ArrayList<Pair> possibleMovesAfterCheck = new ArrayList<>();
@@ -425,7 +425,6 @@ public class ChessGame {
                             if (checkIsCheck(piece, pair.getColumn(), pair.getRow()))
                                 moves++;
                         }
-
                     }
                 }
                 else {
@@ -449,12 +448,112 @@ public class ChessGame {
                 }
 
             }
-            if (moves == possibleMoves.size()) {
-                Log.d(TAG, "ВАМ МАТ!");
-                return true;
+            ChessPiece attackPiece = null;
+            for (ChessPiece piece : piecesBox)
+            {
+                if (checkIsCheck(piece, kingPiece.getColumn(), kingPiece.getRow()))
+                    attackPiece=piece;
             }
+           // Log.d(TAG, attackPiece.getChessman().toString());
+
+            if (moves == possibleMoves.size()) {
+
+
+                if (!canProtectNearSquare(attackPiece, piecesBox))
+                {
+                    //надо проверять может ли защитить фигура с несолкьких клеток
+                    Log.d(TAG, "ВАМ МАТ!");
+                    return true;
+                }
+
+            }
+            if (canProtectDistanceSquare(attackPiece, piecesBox, kingPiece))
+                Log.d(TAG, "Воркь");
         }
         return false;
+    }
+
+    boolean canProtectDistanceSquare(ChessPiece attackPiece, ArrayList<ChessPiece> piecesBx, ChessPiece kingPiece)
+    {
+        ArrayList<Pair> pathAttackFigureToKing = new ArrayList<>();
+        boolean canProtect = false;
+        switch (attackPiece.getChessman()){
+                    case ROOK:
+                        for (int i = attackPiece.getRow()+1; i < kingPiece.getRow()-1; i++) {
+                            for (int j = attackPiece.getColumn()+1; j < kingPiece.getColumn()-1; j++)
+                            {
+                                if(canRookMove(new Square(j, i), new Square(kingPiece.getColumn(),kingPiece.getRow())))
+                                {
+                                    pathAttackFigureToKing.add(new Pair(i,j));
+                                }
+                            }
+                        }
+
+                    case QUEEN:
+                        for (int i = attackPiece.getRow()+1; i < kingPiece.getRow()-1; i++) {
+                            for (int j = attackPiece.getColumn() + 1; j < kingPiece.getColumn() - 1; j++) {
+                                if (canRookMove(new Square(j, i), new Square(kingPiece.getColumn(), kingPiece.getRow()))) {
+                                    pathAttackFigureToKing.add(new Pair(i, j));
+                                }
+                                else if (canBishopMove(new Square(j, i), new Square(kingPiece.getColumn(),kingPiece.getRow())))
+                                pathAttackFigureToKing.add(new Pair(i, j));
+                            }
+                        }
+                    case BISHOP:
+                        for (int i = attackPiece.getRow()+1; i < kingPiece.getRow()-1; i++) {
+                            for (int j = attackPiece.getColumn()+1; j < kingPiece.getColumn()-1; j++)
+                            {
+                                if(canBishopMove(new Square(j, i), new Square(kingPiece.getColumn(),kingPiece.getRow())))
+                                {
+                                    pathAttackFigureToKing.add(new Pair(i,j));
+                                }
+                            }
+                        }
+                }
+
+
+        //создать массив с парами
+        //и проверять может ли какая нить фигура достичь этой пары
+        return canProtect;
+    }
+
+    void findPathAttackFigure()
+    {
+
+    }
+
+
+
+    boolean canProtectNearSquare(ChessPiece attackPiece, ArrayList<ChessPiece> piecesBx) {
+        boolean canProtect = false;
+        for (ChessPiece piece : piecesBx) {
+            if (piece.getPlayer() != attackPiece.getPlayer()) {
+                switch (piece.getChessman()) {
+                    case BISHOP:
+                        if (canBishopMove(new Square(piece.getColumn(), piece.getRow()), new Square(attackPiece.getColumn(), attackPiece.getRow())))
+                            canProtect = true;
+                        break;
+                    case PAWN:
+                        if (canPawnMove(new Square(piece.getColumn(), piece.getRow()), new Square(attackPiece.getColumn(), attackPiece.getRow())))
+                            canProtect = true;
+                        break;
+                    case ROOK:
+                        if (canRookMove(new Square(piece.getColumn(), piece.getRow()), new Square(attackPiece.getColumn(), attackPiece.getRow())))
+                            canProtect = true;
+                        break;
+                    case QUEEN:
+                        if (canQueenMove(new Square(piece.getColumn(), piece.getRow()), new Square(attackPiece.getColumn(), attackPiece.getRow())))
+                            canProtect = true;
+                        break;
+                    case KHIGHT:
+                        if (canKnightMove(new Square(piece.getColumn(), piece.getRow()), new Square(attackPiece.getColumn(), attackPiece.getRow())))
+                            canProtect = true;
+                        break;
+                }
+            }
+
+        }
+        return canProtect;
     }
 
     boolean checkSquareWithPiece(Player p1, Player p2, ChessPiece kPiece, ChessPiece atkPiece, Pair pair_sq) {
@@ -466,18 +565,23 @@ public class ChessGame {
                             case BISHOP:
                                 if (canBishopMove(new Square(attackedPiece.getColumn(), attackedPiece.getRow()), new Square(pair_sq.getColumn(), pair_sq.getRow())))
                                     return true;
+                                break;
                             case PAWN:
                                 if (canPawnMove(new Square(attackedPiece.getColumn(), attackedPiece.getRow()), new Square(pair_sq.getColumn(), pair_sq.getRow())))
                                     return true;
+                                break;
                             case ROOK:
                                 if (canRookMove(new Square(attackedPiece.getColumn(), attackedPiece.getRow()), new Square(pair_sq.getColumn(), pair_sq.getRow())))
                                     return true;
+                                break;
                             case QUEEN:
                                 if (canQueenMove(new Square(attackedPiece.getColumn(), attackedPiece.getRow()), new Square(pair_sq.getColumn(), pair_sq.getRow())))
                                     return true;
+                                break;
                             case KHIGHT:
                                 if (canKnightMove(new Square(attackedPiece.getColumn(), attackedPiece.getRow()), new Square(pair_sq.getColumn(), pair_sq.getRow())))
                                     return true;
+                                break;
                         }
                     }
                 }
@@ -486,120 +590,6 @@ public class ChessGame {
         }
         return false;
     }
-
-            //Сделть проверка на то, может ли фигура защитить поле
-            //аааа слишком много проверок.....
-
-            //перетащить свое творчество в место, где находятся ВСЕ ходы а не только свободные клетки
-
-          /*  for (Pair pair1: possibleMovesAfterCheck)
-            {
-                //ChessPiece checkField = pieceAt(new Square(pair.getColumn(), pair.getRow()));
-                for (ChessPiece piece1 : piecesBox)
-                {
-                    if ((kingPiece.getPlayer()==WHITE_PLAYER)&&(piece.getPlayer()==BLACK_PLAYER))
-                    {
-                        if(checkIsCheck(piece, pair.getColumn(), pair.getRow()))
-                        {
-                            int guard_pieces=0;
-                            for (ChessPiece attackedPiece : piecesBox)
-                            {
-                                if (attackedPiece.getPlayer()==WHITE_PLAYER)
-                                {
-                                    switch (attackedPiece.getChessman())
-                                    {
-                                        case BISHOP:
-                                            if (canBishopMove(new Square(attackedPiece.getColumn(), attackedPiece.getRow()), new Square(pair.getColumn(), pair.getRow())))
-                                                guard_pieces++;
-                                        case PAWN:
-                                            if (canPawnMove(new Square(attackedPiece.getColumn(), attackedPiece.getRow()), new Square(pair.getColumn(), pair.getRow())))
-                                                guard_pieces++;
-                                        case ROOK:
-                                            if (canRookMove(new Square(attackedPiece.getColumn(), attackedPiece.getRow()), new Square(pair.getColumn(), pair.getRow())))
-                                                guard_pieces++;
-                                        case QUEEN:
-                                            if (canQueenMove(new Square(attackedPiece.getColumn(), attackedPiece.getRow()), new Square(pair.getColumn(), pair.getRow())))
-                                                guard_pieces++;
-                                        case KHIGHT:
-                                            if (canKnightMove(new Square(attackedPiece.getColumn(), attackedPiece.getRow()), new Square(pair.getColumn(), pair.getRow())))
-                                                guard_pieces++;
-                                    }
-                                }
-
-                            }
-                            if (guard_pieces==0)
-                            {
-                                Log.d(TAG, "Спастись нельзя!");
-                                moves++;
-                            }
-
-                        }
-
-                    }
-                    else if ((kingPiece.getPlayer()==BLACK_PLAYER)&(piece.getPlayer()==WHITE_PLAYER))
-                    {
-                        if(checkIsCheck(piece,pair.getColumn(), pair.getRow())) {
-
-                            int guard_pieces=0;
-                            for (ChessPiece attackedPiece : piecesBox)
-                            {
-                                if (attackedPiece.getPlayer()==BLACK_PLAYER)
-                                {
-                                    switch (attackedPiece.getChessman())
-                                    {
-                                        case BISHOP:
-                                            if (canBishopMove(new Square(attackedPiece.getColumn(), attackedPiece.getRow()), new Square(pair.getColumn(), pair.getRow())))
-                                                guard_pieces++;
-                                        case PAWN:
-                                            if (canPawnMove(new Square(attackedPiece.getColumn(), attackedPiece.getRow()), new Square(pair.getColumn(), pair.getRow())))
-                                                guard_pieces++;
-                                        case ROOK:
-                                            if (canRookMove(new Square(attackedPiece.getColumn(), attackedPiece.getRow()), new Square(pair.getColumn(), pair.getRow())))
-                                                guard_pieces++;
-                                        case QUEEN:
-                                            if (canQueenMove(new Square(attackedPiece.getColumn(), attackedPiece.getRow()), new Square(pair.getColumn(), pair.getRow())))
-                                                guard_pieces++;
-                                        case KHIGHT:
-                                            if (canKnightMove(new Square(attackedPiece.getColumn(), attackedPiece.getRow()), new Square(pair.getColumn(), pair.getRow())))
-                                                guard_pieces++;
-                                    }
-                                }
-
-                            }
-                            if (guard_pieces==0) {
-                                Log.d(TAG, "Спастись нельзя!");
-                                moves++;
-                            }
-                        }
-
-                    }
-                }
-            }
-
-
-            //мы нашли свободные поля
-            //теперь необходимо проверить бьются ли эти поля, и если да, то можно ли их защитить
-            //для этого
-            //если да - то надо закрываться иначе ход невозмодный
-            //елси достичь не может, то мат
-
-        }
-
-    }*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     private void movePiece(Integer fromCol, Integer fromRow, Integer toCol, Integer toRow) {
 
