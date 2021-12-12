@@ -456,65 +456,253 @@ public class ChessGame {
             }
            // Log.d(TAG, attackPiece.getChessman().toString());
 
+            ArrayList<Pair> test = new ArrayList<>();
+          /*  if (kingPiece.getPlayer()==WHITE_PLAYER)
+                test=canProtectDistanceSquare(attackPiece, piecesBox, kingPiece, WHITE_PLAYER, BLACK_PLAYER);
+            else if (kingPiece.getPlayer()==BLACK_PLAYER)
+                test=canProtectDistanceSquare(attackPiece, piecesBox, kingPiece, BLACK_PLAYER,WHITE_PLAYER);*/
+          /*  if (test.size()>0)
+                Log.d(TAG, "Тут че та есть");*/
+
             if (moves == possibleMoves.size()) {
 
-
-                if (!canProtectNearSquare(attackPiece, piecesBox))
+                if (kingPiece.getPlayer()==WHITE_PLAYER)
                 {
-                    //надо проверять может ли защитить фигура с несолкьких клеток
-                    Log.d(TAG, "ВАМ МАТ!");
-                    return true;
+                    if (!canProtectDistanceSquare(attackPiece, piecesBox, kingPiece, WHITE_PLAYER, BLACK_PLAYER))
+                    {
+                        if (!canProtectNearSquare(attackPiece, piecesBox))
+                        {
+                            //надо проверять может ли защитить фигура с несолкьких клеток
+                            Log.d(TAG, "ВАМ МАТ!");
+                            return true;
+                        }
+                    }
+                }
+                if (kingPiece.getPlayer()==BLACK_PLAYER)
+                {
+                    if (!canProtectDistanceSquare(attackPiece, piecesBox, kingPiece, BLACK_PLAYER,WHITE_PLAYER))
+                    {
+                        if (!canProtectNearSquare(attackPiece, piecesBox))
+                        {
+                            //надо проверять может ли защитить фигура с несолкьких клеток
+                            Log.d(TAG, "ВАМ МАТ!");
+                            return true;
+                        }
+                    }
                 }
 
+
             }
-            if (canProtectDistanceSquare(attackPiece, piecesBox, kingPiece))
-                Log.d(TAG, "Воркь");
+
         }
         return false;
     }
 
-    boolean canProtectDistanceSquare(ChessPiece attackPiece, ArrayList<ChessPiece> piecesBx, ChessPiece kingPiece)
+    boolean canProtectDistanceSquare(ChessPiece attackPiece, ArrayList<ChessPiece> piecesBx, ChessPiece kingPiece, Player p1, Player p2)
     {
+        //kPiece =p1 atkPiece=p2
         ArrayList<Pair> pathAttackFigureToKing = new ArrayList<>();
-        boolean canProtect = false;
+       // boolean canProtect = false;
         switch (attackPiece.getChessman()){
+            //НАМУДРИЛ С ЦИКЛАМИ!!
                     case ROOK:
-                        for (int i = attackPiece.getRow()+1; i < kingPiece.getRow()-1; i++) {
-                            for (int j = attackPiece.getColumn()+1; j < kingPiece.getColumn()-1; j++)
+                        if (canRookMove(new Square(attackPiece.getColumn(),attackPiece.getRow()), new Square(kingPiece.getColumn(), kingPiece.getRow())))
+                        {
+
+                            if (attackPiece.getColumn().equals(kingPiece.getColumn()))//бьет вертикаль
                             {
-                                if(canRookMove(new Square(j, i), new Square(kingPiece.getColumn(),kingPiece.getRow())))
+                                if (attackPiece.getRow()>kingPiece.getRow())
                                 {
-                                    pathAttackFigureToKing.add(new Pair(i,j));
+                                    for (int i=kingPiece.getRow()+1; i<attackPiece.getRow();i++)
+                                        pathAttackFigureToKing.add(new Pair(i, kingPiece.getColumn()));
+                                }
+                                else if (attackPiece.getRow()<kingPiece.getRow())
+                                {
+                                    for (int i=attackPiece.getRow()+1; i<kingPiece.getRow();i++)
+                                        pathAttackFigureToKing.add(new Pair(i, kingPiece.getColumn()));
+                                }
+                            }
+                            else if (attackPiece.getRow().equals(kingPiece.getRow()))
+                            {
+                                if (attackPiece.getColumn()>kingPiece.getColumn())
+                                {
+                                    for (int i=kingPiece.getColumn()+1; i<attackPiece.getColumn();i++)
+                                        pathAttackFigureToKing.add(new Pair(kingPiece.getRow(), i));
+                                }
+                                else if (attackPiece.getColumn()<kingPiece.getColumn())
+                                {
+                                    for (int i=attackPiece.getColumn()+1; i<kingPiece.getColumn();i++)
+                                        pathAttackFigureToKing.add(new Pair(kingPiece.getRow(),i));
                                 }
                             }
                         }
+                        break;
 
                     case QUEEN:
-                        for (int i = attackPiece.getRow()+1; i < kingPiece.getRow()-1; i++) {
-                            for (int j = attackPiece.getColumn() + 1; j < kingPiece.getColumn() - 1; j++) {
-                                if (canRookMove(new Square(j, i), new Square(kingPiece.getColumn(), kingPiece.getRow()))) {
-                                    pathAttackFigureToKing.add(new Pair(i, j));
-                                }
-                                else if (canBishopMove(new Square(j, i), new Square(kingPiece.getColumn(),kingPiece.getRow())))
-                                pathAttackFigureToKing.add(new Pair(i, j));
-                            }
-                        }
-                    case BISHOP:
-                        for (int i = attackPiece.getRow()+1; i < kingPiece.getRow()-1; i++) {
-                            for (int j = attackPiece.getColumn()+1; j < kingPiece.getColumn()-1; j++)
+                        //возможно можно будет в один метод вынести
+                        if (canRookMove(new Square(attackPiece.getColumn(),attackPiece.getRow()), new Square(kingPiece.getColumn(), kingPiece.getRow())))
+                        {
+
+                            if (attackPiece.getColumn().equals(kingPiece.getColumn()))//бьет вертикаль
                             {
-                                if(canBishopMove(new Square(j, i), new Square(kingPiece.getColumn(),kingPiece.getRow())))
+                                if (attackPiece.getRow()>kingPiece.getRow())
                                 {
-                                    pathAttackFigureToKing.add(new Pair(i,j));
+                                    for (int i=kingPiece.getRow()+1; i<attackPiece.getRow();i++)
+                                        pathAttackFigureToKing.add(new Pair(i, kingPiece.getColumn()));
+                                }
+                                else if (attackPiece.getRow()<kingPiece.getRow())
+                                {
+                                    for (int i=attackPiece.getRow()+1; i<kingPiece.getRow();i++)
+                                        pathAttackFigureToKing.add(new Pair(i, kingPiece.getColumn()));
+                                }
+                            }
+                            else if (attackPiece.getRow().equals(kingPiece.getRow()))
+                            {
+                                if (attackPiece.getColumn()>kingPiece.getColumn())
+                                {
+                                    for (int i=kingPiece.getColumn()+1; i<attackPiece.getColumn();i++)
+                                        pathAttackFigureToKing.add(new Pair(kingPiece.getRow(), i));
+                                }
+                                else if (attackPiece.getColumn()<kingPiece.getColumn())
+                                {
+                                    for (int i=attackPiece.getColumn()+1; i<kingPiece.getColumn();i++)
+                                        pathAttackFigureToKing.add(new Pair(kingPiece.getRow(),i));
                                 }
                             }
                         }
+                        else if (canBishopMove(new Square(attackPiece.getColumn(),attackPiece.getRow()), new Square(kingPiece.getColumn(), kingPiece.getRow())))
+                        {
+
+                            if (attackPiece.getColumn()>kingPiece.getColumn())
+                            {
+
+                                if (attackPiece.getRow()<kingPiece.getRow())
+                                {
+                                    int row = attackPiece.getRow()+1;
+                                    int column = attackPiece.getColumn()-1;
+                                    while ((row<kingPiece.getRow())&&(column>kingPiece.getColumn()))
+                                    {
+                                        pathAttackFigureToKing.add(new Pair(row,column));
+                                        row++;
+                                        column--;
+                                    }
+                                }
+                                else if (attackPiece.getRow()>kingPiece.getRow())
+                                {
+                                    int row = attackPiece.getRow()-1;
+                                    int column = attackPiece.getColumn()-1;
+                                    while ((row>kingPiece.getRow())&&(column>kingPiece.getColumn()))
+                                    {
+                                        pathAttackFigureToKing.add(new Pair(row,column));
+                                        row--;
+                                        column--;
+                                    }
+                                }
+                            }
+                            else if (attackPiece.getColumn()<kingPiece.getColumn())
+                            {
+
+                                if (attackPiece.getRow()<kingPiece.getRow())
+                                {
+                                    int row = attackPiece.getRow()+1;
+                                    int column = attackPiece.getColumn()+1;
+                                    while ((row<kingPiece.getRow())&&(column<kingPiece.getColumn()))
+                                    {
+                                        pathAttackFigureToKing.add(new Pair(row, column));
+                                        row++;
+                                        column++;
+                                    }
+                                }
+                                else if (attackPiece.getRow()>kingPiece.getRow())
+                                {
+                                    int row = attackPiece.getRow()-1;
+                                    int column = attackPiece.getColumn()+1;
+                                    while ((row>kingPiece.getRow())&&(column<kingPiece.getColumn()))
+                                    {
+                                        pathAttackFigureToKing.add(new Pair(row, column));
+                                        row--;
+                                        column++;
+                                    }
+                                }
+                            }
+                        }
+                        break;
+                    case BISHOP:
+                    if (canBishopMove(new Square(attackPiece.getColumn(),attackPiece.getRow()), new Square(kingPiece.getColumn(), kingPiece.getRow())))
+                    {
+
+                        if (attackPiece.getColumn()>kingPiece.getColumn())
+                        {
+
+                            if (attackPiece.getRow()<kingPiece.getRow())
+                            {
+                                int row = attackPiece.getRow()+1;
+                                int column = attackPiece.getColumn()-1;
+                                while ((row<kingPiece.getRow())&&(column>kingPiece.getColumn()))
+                                {
+                                    pathAttackFigureToKing.add(new Pair(row,column));
+                                    row++;
+                                    column--;
+                                }
+                            }
+                            else if (attackPiece.getRow()>kingPiece.getRow())
+                            {
+                                int row = attackPiece.getRow()-1;
+                                int column = attackPiece.getColumn()-1;
+                                while ((row>kingPiece.getRow())&&(column>kingPiece.getColumn()))
+                                {
+                                    pathAttackFigureToKing.add(new Pair(row,column));
+                                    row--;
+                                    column--;
+                                }
+                            }
+                        }
+                        else if (attackPiece.getColumn()<kingPiece.getColumn())
+                        {
+
+                            if (attackPiece.getRow()<kingPiece.getRow())
+                            {
+                                int row = attackPiece.getRow()+1;
+                                int column = attackPiece.getColumn()+1;
+                                while ((row<kingPiece.getRow())&&(column<kingPiece.getColumn()))
+                                {
+                                    pathAttackFigureToKing.add(new Pair(row, column));
+                                    row++;
+                                    column++;
+                                }
+                            }
+                            else if (attackPiece.getRow()>kingPiece.getRow())
+                            {
+                                int row = attackPiece.getRow()-1;
+                                int column = attackPiece.getColumn()+1;
+                                while ((row>kingPiece.getRow())&&(column<kingPiece.getColumn()))
+                                {
+                                    pathAttackFigureToKing.add(new Pair(row, column));
+                                    row--;
+                                    column++;
+                                }
+                            }
+                        }
+                    }
+                        break;
                 }
 
+        for (ChessPiece piece : piecesBx)
+        {
+            if ((kingPiece.getPlayer() == p1) && (attackPiece.getPlayer() == p2))
+            {
+                for (Pair pair : pathAttackFigureToKing)
+                    if (canMove(new Square(piece.getColumn(),piece.getRow()), new Square(pair.getColumn(), pair.getRow())))
+                    {
+                        return true;
+                    }
 
+            }
+        }
         //создать массив с парами
         //и проверять может ли какая нить фигура достичь этой пары
-        return canProtect;
+       // return canProtect;
+        return false;
     }
 
     void findPathAttackFigure()
@@ -557,6 +745,8 @@ public class ChessGame {
     }
 
     boolean checkSquareWithPiece(Player p1, Player p2, ChessPiece kPiece, ChessPiece atkPiece, Pair pair_sq) {
+        //метод который я написал сам но не понимаю зачем я его написал
+        //без него не будет work
         if ((kPiece.getPlayer() == p1) && (atkPiece.getPlayer() == p2)) {
             if (checkIsCheck(atkPiece, pair_sq.getColumn(), pair_sq.getRow())) {
                 for (ChessPiece attackedPiece : piecesBox) {
