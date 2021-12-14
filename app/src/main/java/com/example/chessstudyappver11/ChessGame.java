@@ -490,10 +490,7 @@ public class ChessGame {
                         }
                     }
                 }
-
-
             }
-
         }
         return false;
     }
@@ -508,33 +505,7 @@ public class ChessGame {
                     case ROOK:
                         if (canRookMove(new Square(attackPiece.getColumn(),attackPiece.getRow()), new Square(kingPiece.getColumn(), kingPiece.getRow())))
                         {
-
-                            if (attackPiece.getColumn().equals(kingPiece.getColumn()))//бьет вертикаль
-                            {
-                                if (attackPiece.getRow()>kingPiece.getRow())
-                                {
-                                    for (int i=kingPiece.getRow()+1; i<attackPiece.getRow();i++)
-                                        pathAttackFigureToKing.add(new Pair(i, kingPiece.getColumn()));
-                                }
-                                else if (attackPiece.getRow()<kingPiece.getRow())
-                                {
-                                    for (int i=attackPiece.getRow()+1; i<kingPiece.getRow();i++)
-                                        pathAttackFigureToKing.add(new Pair(i, kingPiece.getColumn()));
-                                }
-                            }
-                            else if (attackPiece.getRow().equals(kingPiece.getRow()))
-                            {
-                                if (attackPiece.getColumn()>kingPiece.getColumn())
-                                {
-                                    for (int i=kingPiece.getColumn()+1; i<attackPiece.getColumn();i++)
-                                        pathAttackFigureToKing.add(new Pair(kingPiece.getRow(), i));
-                                }
-                                else if (attackPiece.getColumn()<kingPiece.getColumn())
-                                {
-                                    for (int i=attackPiece.getColumn()+1; i<kingPiece.getColumn();i++)
-                                        pathAttackFigureToKing.add(new Pair(kingPiece.getRow(),i));
-                                }
-                            }
+                            findRookPath(kingPiece,attackPiece, pathAttackFigureToKing);
                         }
                         break;
 
@@ -542,147 +513,17 @@ public class ChessGame {
                         //возможно можно будет в один метод вынести
                         if (canRookMove(new Square(attackPiece.getColumn(),attackPiece.getRow()), new Square(kingPiece.getColumn(), kingPiece.getRow())))
                         {
-
-                            if (attackPiece.getColumn().equals(kingPiece.getColumn()))//бьет вертикаль
-                            {
-                                if (attackPiece.getRow()>kingPiece.getRow())
-                                {
-                                    for (int i=kingPiece.getRow()+1; i<attackPiece.getRow();i++)
-                                        pathAttackFigureToKing.add(new Pair(i, kingPiece.getColumn()));
-                                }
-                                else if (attackPiece.getRow()<kingPiece.getRow())
-                                {
-                                    for (int i=attackPiece.getRow()+1; i<kingPiece.getRow();i++)
-                                        pathAttackFigureToKing.add(new Pair(i, kingPiece.getColumn()));
-                                }
-                            }
-                            else if (attackPiece.getRow().equals(kingPiece.getRow()))
-                            {
-                                if (attackPiece.getColumn()>kingPiece.getColumn())
-                                {
-                                    for (int i=kingPiece.getColumn()+1; i<attackPiece.getColumn();i++)
-                                        pathAttackFigureToKing.add(new Pair(kingPiece.getRow(), i));
-                                }
-                                else if (attackPiece.getColumn()<kingPiece.getColumn())
-                                {
-                                    for (int i=attackPiece.getColumn()+1; i<kingPiece.getColumn();i++)
-                                        pathAttackFigureToKing.add(new Pair(kingPiece.getRow(),i));
-                                }
-                            }
+                            findRookPath(kingPiece,attackPiece, pathAttackFigureToKing);
                         }
                         else if (canBishopMove(new Square(attackPiece.getColumn(),attackPiece.getRow()), new Square(kingPiece.getColumn(), kingPiece.getRow())))
                         {
-
-                            if (attackPiece.getColumn()>kingPiece.getColumn())
-                            {
-
-                                if (attackPiece.getRow()<kingPiece.getRow())
-                                {
-                                    int row = attackPiece.getRow()+1;
-                                    int column = attackPiece.getColumn()-1;
-                                    while ((row<kingPiece.getRow())&&(column>kingPiece.getColumn()))
-                                    {
-                                        pathAttackFigureToKing.add(new Pair(row,column));
-                                        row++;
-                                        column--;
-                                    }
-                                }
-                                else if (attackPiece.getRow()>kingPiece.getRow())
-                                {
-                                    int row = attackPiece.getRow()-1;
-                                    int column = attackPiece.getColumn()-1;
-                                    while ((row>kingPiece.getRow())&&(column>kingPiece.getColumn()))
-                                    {
-                                        pathAttackFigureToKing.add(new Pair(row,column));
-                                        row--;
-                                        column--;
-                                    }
-                                }
-                            }
-                            else if (attackPiece.getColumn()<kingPiece.getColumn())
-                            {
-
-                                if (attackPiece.getRow()<kingPiece.getRow())
-                                {
-                                    int row = attackPiece.getRow()+1;
-                                    int column = attackPiece.getColumn()+1;
-                                    while ((row<kingPiece.getRow())&&(column<kingPiece.getColumn()))
-                                    {
-                                        pathAttackFigureToKing.add(new Pair(row, column));
-                                        row++;
-                                        column++;
-                                    }
-                                }
-                                else if (attackPiece.getRow()>kingPiece.getRow())
-                                {
-                                    int row = attackPiece.getRow()-1;
-                                    int column = attackPiece.getColumn()+1;
-                                    while ((row>kingPiece.getRow())&&(column<kingPiece.getColumn()))
-                                    {
-                                        pathAttackFigureToKing.add(new Pair(row, column));
-                                        row--;
-                                        column++;
-                                    }
-                                }
-                            }
+                           findBishopPath(kingPiece, attackPiece, pathAttackFigureToKing);
                         }
                         break;
                     case BISHOP:
                     if (canBishopMove(new Square(attackPiece.getColumn(),attackPiece.getRow()), new Square(kingPiece.getColumn(), kingPiece.getRow())))
                     {
-
-                        if (attackPiece.getColumn()>kingPiece.getColumn())
-                        {
-
-                            if (attackPiece.getRow()<kingPiece.getRow())
-                            {
-                                int row = attackPiece.getRow()+1;
-                                int column = attackPiece.getColumn()-1;
-                                while ((row<kingPiece.getRow())&&(column>kingPiece.getColumn()))
-                                {
-                                    pathAttackFigureToKing.add(new Pair(row,column));
-                                    row++;
-                                    column--;
-                                }
-                            }
-                            else if (attackPiece.getRow()>kingPiece.getRow())
-                            {
-                                int row = attackPiece.getRow()-1;
-                                int column = attackPiece.getColumn()-1;
-                                while ((row>kingPiece.getRow())&&(column>kingPiece.getColumn()))
-                                {
-                                    pathAttackFigureToKing.add(new Pair(row,column));
-                                    row--;
-                                    column--;
-                                }
-                            }
-                        }
-                        else if (attackPiece.getColumn()<kingPiece.getColumn())
-                        {
-
-                            if (attackPiece.getRow()<kingPiece.getRow())
-                            {
-                                int row = attackPiece.getRow()+1;
-                                int column = attackPiece.getColumn()+1;
-                                while ((row<kingPiece.getRow())&&(column<kingPiece.getColumn()))
-                                {
-                                    pathAttackFigureToKing.add(new Pair(row, column));
-                                    row++;
-                                    column++;
-                                }
-                            }
-                            else if (attackPiece.getRow()>kingPiece.getRow())
-                            {
-                                int row = attackPiece.getRow()-1;
-                                int column = attackPiece.getColumn()+1;
-                                while ((row>kingPiece.getRow())&&(column<kingPiece.getColumn()))
-                                {
-                                    pathAttackFigureToKing.add(new Pair(row, column));
-                                    row--;
-                                    column++;
-                                }
-                            }
-                        }
+                        findBishopPath(kingPiece,attackPiece, pathAttackFigureToKing);
                     }
                         break;
                 }
@@ -705,11 +546,91 @@ public class ChessGame {
         return false;
     }
 
-    void findPathAttackFigure()
+    void findRookPath(ChessPiece kingPiece, ChessPiece attackPiece, ArrayList<Pair> path)
     {
-
+        if (attackPiece.getColumn().equals(kingPiece.getColumn()))//бьет вертикаль
+        {
+            if (attackPiece.getRow()>kingPiece.getRow())
+            {
+                for (int i=kingPiece.getRow()+1; i<attackPiece.getRow();i++)
+                    path.add(new Pair(i, kingPiece.getColumn()));
+            }
+            else if (attackPiece.getRow()<kingPiece.getRow())
+            {
+                for (int i=attackPiece.getRow()+1; i<kingPiece.getRow();i++)
+                    path.add(new Pair(i, kingPiece.getColumn()));
+            }
+        }
+        else if (attackPiece.getRow().equals(kingPiece.getRow()))
+        {
+            if (attackPiece.getColumn()>kingPiece.getColumn())
+            {
+                for (int i=kingPiece.getColumn()+1; i<attackPiece.getColumn();i++)
+                    path.add(new Pair(kingPiece.getRow(), i));
+            }
+            else if (attackPiece.getColumn()<kingPiece.getColumn())
+            {
+                for (int i=attackPiece.getColumn()+1; i<kingPiece.getColumn();i++)
+                    path.add(new Pair(kingPiece.getRow(),i));
+            }
+        }
     }
 
+    void findBishopPath(ChessPiece kingPiece, ChessPiece attackPiece, ArrayList<Pair> path)
+    {
+        if (attackPiece.getColumn()>kingPiece.getColumn())
+        {
+
+            if (attackPiece.getRow()<kingPiece.getRow())
+            {
+                int row = attackPiece.getRow()+1;
+                int column = attackPiece.getColumn()-1;
+                while ((row<kingPiece.getRow())&&(column>kingPiece.getColumn()))
+                {
+                    path.add(new Pair(row,column));
+                    row++;
+                    column--;
+                }
+            }
+            else if (attackPiece.getRow()>kingPiece.getRow())
+            {
+                int row = attackPiece.getRow()-1;
+                int column = attackPiece.getColumn()-1;
+                while ((row>kingPiece.getRow())&&(column>kingPiece.getColumn()))
+                {
+                    path.add(new Pair(row,column));
+                    row--;
+                    column--;
+                }
+            }
+        }
+        else if (attackPiece.getColumn()<kingPiece.getColumn())
+        {
+
+            if (attackPiece.getRow()<kingPiece.getRow())
+            {
+                int row = attackPiece.getRow()+1;
+                int column = attackPiece.getColumn()+1;
+                while ((row<kingPiece.getRow())&&(column<kingPiece.getColumn()))
+                {
+                    path.add(new Pair(row, column));
+                    row++;
+                    column++;
+                }
+            }
+            else if (attackPiece.getRow()>kingPiece.getRow())
+            {
+                int row = attackPiece.getRow()-1;
+                int column = attackPiece.getColumn()+1;
+                while ((row>kingPiece.getRow())&&(column<kingPiece.getColumn()))
+                {
+                    path.add(new Pair(row, column));
+                    row--;
+                    column++;
+                }
+            }
+        }
+    }
 
 
     boolean canProtectNearSquare(ChessPiece attackPiece, ArrayList<ChessPiece> piecesBx) {
