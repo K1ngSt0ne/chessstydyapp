@@ -21,7 +21,7 @@ public class ChessGame {
     boolean whiteKingCheck = false;
     boolean blackKingCheck = false;
     boolean endGame = false;
-
+    boolean isCastling = false;
     private ArrayList<ChessPiece> piecesBox = new ArrayList<>();
     private ArrayList<ChessPiece> nextTurnPiecesBox = new ArrayList<>();
 
@@ -317,7 +317,14 @@ public class ChessGame {
 
                 switch (piece.getChessman()) {
                     case KING:
-                        return canKingMove(from, to);
+                        if (canCastling(piece, piecesBox, to))
+                        {
+                            isCastling=true;
+                            return true;
+                        }
+
+                        else
+                            return canKingMove(from, to);
                     case PAWN:
                         return canPawnMove(from, to);
                     case ROOK:
@@ -348,10 +355,17 @@ public class ChessGame {
     void movePiece(Square from, Square to) {
         nextTurnPiecesBox=new ArrayList<ChessPiece>(piecesBox);
         if (canMove(from, to)) {
+          /*  if (isCastling)
+            {
+                movePiece(from.getColumn(), from.getRow(), to.getColumn(), to.getRow());
+                movePiece(7, 0, 5, 0);
+            }
+
+            else*/
             movePiece(from.getColumn(), from.getRow(), to.getColumn(), to.getRow());
             if (secondBoard(piecesBox))
             {
-                Log.d(TAG, "БАН Н! ТАК ХОДИТЬ НЕЛЬЗЯ!");
+                Log.d(TAG, "ТАК ХОДИТЬ НЕЛЬЗЯ!");
                 movePiece(to.getColumn(),to.getRow(), from.getColumn(), from.getRow());
                 piecesBox=new ArrayList<>(nextTurnPiecesBox);
             }
@@ -394,6 +408,63 @@ public class ChessGame {
                 turnPlayer= switchPlayer(turnPlayer);
             }
         }
+    }
+    boolean canCastling(ChessPiece kingPiece, ArrayList<ChessPiece> piecesB, Square destination)
+    {
+        for (ChessPiece piece : piecesB)
+        {
+            if ((piece.getChessman()==Chessman.ROOK)&&(piece.getPlayer()==kingPiece.getPlayer()))
+            {
+                if (isClearHorizontallyBetween(new Square(kingPiece.getColumn(), kingPiece.getRow()), new Square(piece.getColumn(), piece.getRow())))
+                {
+                    if ((destination.getColumn()==kingPiece.getColumn()+2)&&((kingPiece.getRow()==0)||(kingPiece.getRow()==7))&&(piece.getColumn()==7))
+                    {
+                        boolean notCastling=false;
+
+                        for (int i= kingPiece.getColumn(); i<=destination.getColumn();i++)
+                        {
+                            for (ChessPiece piece1 : piecesB)
+                            {
+                                if (piece1.getPlayer()!=kingPiece.getPlayer())
+                                {
+                                    if (checkIsCheck(piece1, i,kingPiece.getRow()))
+                                        notCastling=true;
+                                }
+                            }
+                        }
+                        if (!notCastling)
+                        {
+                            movePiece(piece.getColumn(), piece.getRow(), (piece.getColumn()-2), piece.getRow());
+                            return true;
+                        }
+                        //проверить на то что это первый ход фигуры
+
+                    }
+
+                    else if ((destination.getColumn()==kingPiece.getColumn()-2)&&((kingPiece.getRow()==0)||(kingPiece.getRow()==7)&&(piece.getColumn()==0)))
+                    {
+                        boolean notCastling=false;
+                        for (int i= kingPiece.getColumn(); i<=destination.getColumn();i++)
+                        {
+                            for (ChessPiece piece1 : piecesB) {
+                                if (piece1.getPlayer() != kingPiece.getPlayer()) {
+                                    if (checkIsCheck(piece1, i, kingPiece.getRow()))
+                                        notCastling = true;
+                                }
+                            }
+                        }
+                        if (!notCastling)
+                        {
+                            movePiece(piece.getColumn(), piece.getRow(), (piece.getColumn()+3), piece.getRow());
+                            return true;
+                        }
+                    }
+
+                    //сдлеать флаг и по нему перемещать ладью
+                }
+            }
+        }
+        return false;
     }
 
     boolean checkMate(ChessPiece kingPiece) {
@@ -454,16 +525,7 @@ public class ChessGame {
                 if (checkIsCheck(piece, kingPiece.getColumn(), kingPiece.getRow()))
                     attackPiece=piece;
             }
-           // Log.d(TAG, attackPiece.getChessman().toString());
-
             ArrayList<Pair> test = new ArrayList<>();
-          /*  if (kingPiece.getPlayer()==WHITE_PLAYER)
-                test=canProtectDistanceSquare(attackPiece, piecesBox, kingPiece, WHITE_PLAYER, BLACK_PLAYER);
-            else if (kingPiece.getPlayer()==BLACK_PLAYER)
-                test=canProtectDistanceSquare(attackPiece, piecesBox, kingPiece, BLACK_PLAYER,WHITE_PLAYER);*/
-          /*  if (test.size()>0)
-                Log.d(TAG, "Тут че та есть");*/
-
             if (moves == possibleMoves.size()) {
 
                 if (kingPiece.getPlayer()==WHITE_PLAYER)
