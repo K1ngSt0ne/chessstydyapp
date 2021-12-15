@@ -5,6 +5,6 @@ enum Chessman {
     QUEEN,
     BISHOP,
     ROOK,
-    KHIGHT,
+    KNIGHT,
     PAWN,
 }
