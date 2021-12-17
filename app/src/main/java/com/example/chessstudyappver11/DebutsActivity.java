@@ -48,8 +48,6 @@ public class DebutsActivity extends AppCompatActivity implements ChessDelegate{
                 movesHistory.add(to);
                 historyMovesShow(to, start_size,end_size, piece_type);
             }
-
-
             if (chessGame.isEndGame())
             {
                 statusBar.setText("Вы проиграли");
@@ -65,14 +63,24 @@ public class DebutsActivity extends AppCompatActivity implements ChessDelegate{
         ParseSquareToNotationMoves move = new ParseSquareToNotationMoves(destination.getColumn(),destination.getRow(), start_size,end_size, piece);
         String move_to_HM=move.convertSquareToNotation(move);
         String all_moves="";
+        //т.к. мы сходили, у нас поменялась очередность хода, поэтому в данный момент ход черных, отсюда и проверка
+        //(но на самом деле это для белых)
         if (chessGame.getTurnPlayer()==Player.BLACK)
         {
-           all_moves=historyMoves.getText()+ " "+ turns+move_to_HM;
+            if (chessGame.blackKingCheck)
+                all_moves=historyMoves.getText()+ " "+ turns+move_to_HM+"+";
+           else
+                all_moves=historyMoves.getText()+ " "+ turns+move_to_HM;
         }
+        //(а это для черных)
         else
         {
-            all_moves=historyMoves.getText()+ " "+move_to_HM;
+            if (chessGame.whiteKingCheck)
+                all_moves=historyMoves.getText()+ " "+move_to_HM + "+";
+            else
+                all_moves=historyMoves.getText()+ " "+move_to_HM;
             turns++;
+
         }
         historyMoves.setText(all_moves);
 

@@ -31,6 +31,7 @@ public class ChessGame {
     boolean endGame = false;
     boolean isCastling = false;
     boolean isMoving= false;
+    private boolean canMovingWhileCheck = false;
     private ArrayList<ChessPiece> piecesBox = new ArrayList<>();
     private ArrayList<ChessPiece> nextTurnPiecesBox = new ArrayList<>();
 
@@ -308,16 +309,19 @@ public class ChessGame {
         //проверить на игрока и что его ход
         ChessPiece piecePlayer = pieceAt(from.getColumn(), from.getRow());
         ChessPiece kingPiece = pieceAt(to.getColumn(), to.getRow());
-        if ((from.getColumn() == to.getColumn() && from.getRow() == to.getRow()) || (piecePlayer.getPlayer() != turnPlayer))
-            return false;
-        else {
-            //Сделать копию доски с новым ходом, если белые дают шах, то запрещаем ход иначе меняем на копию
-            if (kingPiece!=null)
-            {
-                if (kingPiece.getChessman()==Chessman.KING)
-                    return false;
-            }
-            ChessPiece piece = pieceAt(from);
+        if ((piecePlayer.getPlayer()==turnPlayer)|| (canMovingWhileCheck))
+        {
+            //|| (piecePlayer.getPlayer() != turnPlayer)
+            if ((from.getColumn() == to.getColumn() && from.getRow() == to.getRow()) ||(to.getRow()<0 || to.getRow()>8) || (to.getColumn()<0 || to.getColumn()>8))
+                return false;
+            else {
+                //Сделать копию доски с новым ходом, если белые дают шах, то запрещаем ход иначе меняем на копию
+                if (kingPiece!=null)
+                {
+                    if (kingPiece.getChessman()==Chessman.KING)
+                        return false;
+                }
+                ChessPiece piece = pieceAt(from);
 
 
                 switch (piece.getChessman()) {
@@ -340,8 +344,11 @@ public class ChessGame {
                         return canBishopMove(from, to);
                     case KNIGHT:
                         return canKnightMove(from, to);
+                }
             }
         }
+        else
+            return false;
 
         return true;
     }
@@ -383,8 +390,9 @@ public class ChessGame {
                     else
                     {
                         Log.d(TAG, "Black king need protect!");
-                        blackKingCheck=true;
+
                     }
+                    blackKingCheck=true;
 
                 }
                 else if ((turnPlayer==BLACK_PLAYER)&&(isCheck(piecesBox)))
@@ -398,8 +406,8 @@ public class ChessGame {
                     else
                     {
                         Log.d(TAG, "White king need protect!");
-                        whiteKingCheck=true;
                     }
+                    whiteKingCheck=true;
 
                 }
                 else {
@@ -407,6 +415,7 @@ public class ChessGame {
                     whiteKingCheck=false;
                 }
                 turnPlayer= switchPlayer(turnPlayer);
+                canMovingWhileCheck=false;
 
             }
         }
@@ -477,13 +486,12 @@ public class ChessGame {
             //найдем возможные ходы для короля и добавим их в массив
             for (int i = kingPiece.getRow() - 1; i <= kingPiece.getRow() + 1; i++) {
                 for (int j = kingPiece.getColumn() - 1; j <= kingPiece.getColumn() + 1; j++) {
-                    if ((i >= 0 && i < 8) && (j >= 0 && j < 8)) {
+                    if ((i >= 0 && i <= 7) && (j >= 0 && j <= 7 )) {
                         if (canKingMove(new Square(kingPiece.getColumn(), kingPiece.getRow()), new Square(j, i)))
                             possibleMoves.add(new Pair(i, j));
                     }
                 }
             }
-            ArrayList<Pair> possibleMovesAfterCheck = new ArrayList<>();
             int moves = 0;
             //чекаем мат
             for (Pair pair : possibleMoves) {
@@ -491,6 +499,7 @@ public class ChessGame {
                 ChessPiece pieceFree = pieceAt(pair.getColumn(), pair.getRow());
                 if (pieceFree == null) //если пустая клетка проерит что она под боем
                 {
+                    //нужно проверять клетки за королем (по ходу  движения атакующей фигуры, т.е. той окторая дала шах)
                     for (ChessPiece piece : piecesBox) {
                         if ((kingPiece.getPlayer() == WHITE_PLAYER) && (piece.getPlayer() == BLACK_PLAYER)) {
                             if (checkIsCheck(piece, pair.getColumn(), pair.getRow()))
@@ -528,8 +537,14 @@ public class ChessGame {
                 if (checkIsCheck(piece, kingPiece.getColumn(), kingPiece.getRow()))
                     attackPiece=piece;
             }
-            ArrayList<Pair> test = new ArrayList<>();
-            if (moves == possibleMoves.size()) {
+            //АЛЕРТ! ЕСЛИ дается мат по последней горизонтали/вертикали, то при учете не считается клектка ЗА королем
+            //отюсда размеры не совпадают и пункт скипается
+            //ну короче костыль не работает - теперь на простые шахи агрится
+            //как варик - проверять дважды
+            //.....
+            //if (moves == possibleMoves.size())
+            //
+            if (moves >= possibleMoves.size()-1) {
 
                 if (kingPiece.getPlayer()==WHITE_PLAYER)
                 {
@@ -547,6 +562,7 @@ public class ChessGame {
                 {
                     if (!canProtectDistanceSquare(attackPiece, piecesBox, kingPiece, BLACK_PLAYER,WHITE_PLAYER))
                     {
+                        Log.d(TAG, "Нельзя защиттить из далека");
                         if (!canProtectNearSquare(attackPiece, piecesBox))
                         {
                             //надо проверять может ли защитить фигура с несолкьких клеток
@@ -562,52 +578,47 @@ public class ChessGame {
 
     private boolean canProtectDistanceSquare(ChessPiece attackPiece, ArrayList<ChessPiece> piecesBx, ChessPiece kingPiece, Player p1, Player p2)
     {
-        //kPiece =p1 atkPiece=p2
+        //НУЖНО ЗАПИЛИТЬ ПРОВЕРКУ НА ПЕШКИ!!!
         ArrayList<Pair> pathAttackFigureToKing = new ArrayList<>();
-       // boolean canProtect = false;
         switch (attackPiece.getChessman()){
-            //НАМУДРИЛ С ЦИКЛАМИ!!
-                    case ROOK:
-                        if (canRookMove(new Square(attackPiece.getColumn(),attackPiece.getRow()), new Square(kingPiece.getColumn(), kingPiece.getRow())))
-                        {
-                            findRookPath(kingPiece,attackPiece, pathAttackFigureToKing);
-                        }
-                        break;
-
-                    case QUEEN:
-                        //возможно можно будет в один метод вынести
-                        if (canRookMove(new Square(attackPiece.getColumn(),attackPiece.getRow()), new Square(kingPiece.getColumn(), kingPiece.getRow())))
-                        {
-                            findRookPath(kingPiece,attackPiece, pathAttackFigureToKing);
-                        }
-                        else if (canBishopMove(new Square(attackPiece.getColumn(),attackPiece.getRow()), new Square(kingPiece.getColumn(), kingPiece.getRow())))
-                        {
-                           findBishopPath(kingPiece, attackPiece, pathAttackFigureToKing);
-                        }
-                        break;
-                    case BISHOP:
-                    if (canBishopMove(new Square(attackPiece.getColumn(),attackPiece.getRow()), new Square(kingPiece.getColumn(), kingPiece.getRow())))
-                    {
-                        findBishopPath(kingPiece,attackPiece, pathAttackFigureToKing);
-                    }
-                        break;
+            case ROOK:
+                if (canRookMove(new Square(attackPiece.getColumn(),attackPiece.getRow()), new Square(kingPiece.getColumn(), kingPiece.getRow())))
+                {
+                    findRookPath(kingPiece,attackPiece, pathAttackFigureToKing);
                 }
+                break;
+            case QUEEN:
+                //возможно можно будет в один метод вынести
+                if (canRookMove(new Square(attackPiece.getColumn(),attackPiece.getRow()), new Square(kingPiece.getColumn(), kingPiece.getRow())))
+                {
+                    findRookPath(kingPiece,attackPiece, pathAttackFigureToKing);
+                }
+                else if (canBishopMove(new Square(attackPiece.getColumn(),attackPiece.getRow()), new Square(kingPiece.getColumn(), kingPiece.getRow())))
+                {
+                    findBishopPath(kingPiece, attackPiece, pathAttackFigureToKing);
+                }
+                break;
+
+            case BISHOP:
+                if (canBishopMove(new Square(attackPiece.getColumn(),attackPiece.getRow()), new Square(kingPiece.getColumn(), kingPiece.getRow())))
+                {
+                    findBishopPath(kingPiece,attackPiece, pathAttackFigureToKing);
+                }
+                break;
+        }
 
         for (ChessPiece piece : piecesBx)
         {
-            if ((kingPiece.getPlayer() == p1) && (attackPiece.getPlayer() == p2))
-            {
-                for (Pair pair : pathAttackFigureToKing)
-                    if (canMove(new Square(piece.getColumn(),piece.getRow()), new Square(pair.getColumn(), pair.getRow())))
-                    {
+            if ((kingPiece.getPlayer() == p1) && (attackPiece.getPlayer() == p2) && (piece.getPlayer()==p1) && (piece.getChessman()!=Chessman.KING)) {
+                for (Pair pair : pathAttackFigureToKing) {
+                    canMovingWhileCheck=true;
+                    if (canMove(new Square(piece.getColumn(), piece.getRow()), new Square(pair.getColumn(), pair.getRow()))) {
                         return true;
-                    }
+                }
+            }
 
             }
         }
-        //создать массив с парами
-        //и проверять может ли какая нить фигура достичь этой пары
-       // return canProtect;
         return false;
     }
 

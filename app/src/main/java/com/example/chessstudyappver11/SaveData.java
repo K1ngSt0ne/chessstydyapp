@@ -163,4 +163,21 @@ public class SaveData {
 }
 
      */
+
+                               /* else if ((piece.getColumn()==pair.getColumn())&&(pair.getRow()-1==kingPiece.getRow()))
+                                moves++;
+                            else if ((piece.getRow()==pair.getRow())&&(pair.getColumn()-1==kingPiece.getColumn()))
+                                moves++;
+                            else if ((piece.getColumn()==pair.getColumn())&&(pair.getRow()+1==kingPiece.getRow()))
+                                moves++;
+                            else if ((piece.getRow()==pair.getRow())&&(pair.getColumn()+1==kingPiece.getColumn()))
+                                moves++;
+                            else if (((piece.getColumn()<pair.getColumn())&&(piece.getRow()<pair.getRow()))&&((pair.getRow()-1==kingPiece.getRow())&&(pair.getColumn()-1==kingPiece.getColumn())))
+                                moves++;
+                            else if (((piece.getColumn()<pair.getColumn())&&(piece.getRow()>pair.getRow()))&&((pair.getRow()+1==kingPiece.getRow())&&(pair.getColumn()-1==kingPiece.getColumn())))
+                                moves++;
+                            else if (((piece.getColumn()>pair.getColumn())&&(piece.getRow()>pair.getRow()))&&((pair.getRow()+1==kingPiece.getRow())&&(pair.getColumn()+1==kingPiece.getColumn())))
+                                moves++;
+                            else if (((piece.getColumn()>pair.getColumn())&&(piece.getRow()<pair.getRow()))&&((pair.getRow()+1==kingPiece.getRow())&&(pair.getColumn()-1==kingPiece.getColumn())))
+                                moves++;*/
 }
