@@ -10,12 +10,12 @@ import static java.lang.Math.abs;
 
 /**
  * Что еще необходимо сделать:
- * история ходов
+ * история ходов (частично есть)
  * запись в файл
  * превращение фигур (с помощью select dialog)
  * взятие на проходе (опционально)
  * подфиксить рокировку (проверка на ход короля/ладьи)
- * корректное отображение победившего/проигравшего
+ * корректное отображение победившего/проигравшего (впринципе тоже)
  * парсер из нотации в позицию
  * */
 
@@ -30,6 +30,8 @@ public class ChessGame {
     boolean blackKingCheck = false;
     boolean endGame = false;
     boolean isCastling = false;
+    boolean shortCastling = false;
+    boolean longCastling = false;
     boolean isMoving= false;
     private boolean canMovingWhileCheck = false;
     private ArrayList<ChessPiece> piecesBox = new ArrayList<>();
@@ -328,7 +330,7 @@ public class ChessGame {
                     case KING:
                         if (canCastling(piece, piecesBox, to))
                         {
-                            isCastling=true;
+                           // isCastling=true;
                             return true;
                         }
 
@@ -416,7 +418,6 @@ public class ChessGame {
                 }
                 turnPlayer= switchPlayer(turnPlayer);
                 canMovingWhileCheck=false;
-
             }
         }
         else
@@ -451,6 +452,7 @@ public class ChessGame {
                         if (!notCastling)
                         {
                             movePiece(piece.getColumn(), piece.getRow(), (piece.getColumn()-2), piece.getRow());
+                            shortCastling=true;
                             return true;
                         }
                     }
@@ -470,6 +472,7 @@ public class ChessGame {
                         if (!notCastling)
                         {
                             movePiece(piece.getColumn(), piece.getRow(), (piece.getColumn()+3), piece.getRow());
+                            longCastling=true;
                             return true;
                         }
                     }
@@ -492,6 +495,12 @@ public class ChessGame {
                     }
                 }
             }
+            ChessPiece attackPiece = null;
+            for (ChessPiece piece : piecesBox)
+            {
+                if (checkIsCheck(piece, kingPiece.getColumn(), kingPiece.getRow()))
+                    attackPiece=piece;
+            }
             int moves = 0;
             //чекаем мат
             for (Pair pair : possibleMoves) {
@@ -500,15 +509,46 @@ public class ChessGame {
                 if (pieceFree == null) //если пустая клетка проерит что она под боем
                 {
                     //нужно проверять клетки за королем (по ходу  движения атакующей фигуры, т.е. той окторая дала шах)
-                    for (ChessPiece piece : piecesBox) {
+                    // для этого напиишем метод, котоырй проверяет, может ли фигура пойти на клетку за королем
+                    //передавая в качестве клетки отправления - позицию короля и в качестве клетки назанчения - клетку за королем, а так же тип фигуры
+                    //при этом еще нужно проверять движение фигуры
+                   /*for (ChessPiece piece : piecesBox) {
                         if ((kingPiece.getPlayer() == WHITE_PLAYER) && (piece.getPlayer() == BLACK_PLAYER)) {
                             if (checkIsCheck(piece, pair.getColumn(), pair.getRow()))
                                 moves++;
-                        } else if ((kingPiece.getPlayer() == BLACK_PLAYER) & (piece.getPlayer() == WHITE_PLAYER)) {
+
+                        } else if ((kingPiece.getPlayer() == BLACK_PLAYER) && (piece.getPlayer() == WHITE_PLAYER)) {
                             if (checkIsCheck(piece, pair.getColumn(), pair.getRow()))
                                 moves++;
+
+                        }
+                    }*/
+
+                    /**
+                     * КАРОЧЕ
+                     * ПРОВЕРЯЕТ ОН НЕ КОПИЮ А ОРИГИНАЛ**/
+                    nextTurnPiecesBox=new ArrayList<ChessPiece>(piecesBox);
+                    ChessPiece newKing = new ChessPiece(kingPiece.getColumn(), kingPiece.getRow(), kingPiece.getPlayer(), kingPiece.getChessman(), kingPiece.getResID());
+                    piecesBox.remove(kingPiece);
+                    newKing.setColumn(pair.getColumn());
+                    newKing.setRow(pair.getRow());
+                    piecesBox.add(newKing);
+                    for (ChessPiece piece : piecesBox) {
+                        if ((newKing.getPlayer() == WHITE_PLAYER) && (piece.getPlayer() == BLACK_PLAYER)) {
+                            if ((piece.getColumn()< newKing.getColumn())&&(attackPiece.getColumn()<piece.getColumn()))
+                            {
+                                Log.d(TAG, "Фигура:" + piece.getChessman() + "стоит на пути!!");
+                            }
+                            if (checkIsCheck(piece, newKing.getColumn(), newKing.getRow()))
+                                moves++;
+                        } else if ((newKing.getPlayer() == BLACK_PLAYER) & (piece.getPlayer() == WHITE_PLAYER)) {
+                            if (checkIsCheck(piece, newKing.getColumn(), newKing.getRow()))
+                                moves++;
+
                         }
                     }
+                    piecesBox=new ArrayList<>(nextTurnPiecesBox);
+
                 }
                 else {
                     int guard_pieces=0;
@@ -531,12 +571,7 @@ public class ChessGame {
                 }
 
             }
-            ChessPiece attackPiece = null;
-            for (ChessPiece piece : piecesBox)
-            {
-                if (checkIsCheck(piece, kingPiece.getColumn(), kingPiece.getRow()))
-                    attackPiece=piece;
-            }
+
             //АЛЕРТ! ЕСЛИ дается мат по последней горизонтали/вертикали, то при учете не считается клектка ЗА королем
             //отюсда размеры не совпадают и пункт скипается
             //ну короче костыль не работает - теперь на простые шахи агрится
@@ -544,7 +579,11 @@ public class ChessGame {
             //.....
             //if (moves == possibleMoves.size())
             //
-            if (moves >= possibleMoves.size()-1) {
+
+            //попытаться сделать две проверки - если обе проваливаются то бан, иначе не бан
+            Log.d(TAG, "Moves: " + moves);
+            Log.d(TAG, "Possible moves " + possibleMoves.size());
+            if (moves >= possibleMoves.size()) {
 
                 if (kingPiece.getPlayer()==WHITE_PLAYER)
                 {
@@ -552,7 +591,9 @@ public class ChessGame {
                     {
                         if (!canProtectNearSquare(attackPiece, piecesBox))
                         {
-                            //надо проверять может ли защитить фигура с несолкьких клеток
+
+                            // нет проверки на то, что можно взять фигуру
+                            //добавить сюда ифчик
                             Log.d(TAG, "ВАМ МАТ!");
                             return true;
                         }
