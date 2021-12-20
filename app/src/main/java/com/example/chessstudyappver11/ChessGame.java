@@ -508,25 +508,6 @@ public class ChessGame {
                 ChessPiece pieceFree = pieceAt(pair.getColumn(), pair.getRow());
                 if (pieceFree == null) //если пустая клетка проерит что она под боем
                 {
-                    //нужно проверять клетки за королем (по ходу  движения атакующей фигуры, т.е. той окторая дала шах)
-                    // для этого напиишем метод, котоырй проверяет, может ли фигура пойти на клетку за королем
-                    //передавая в качестве клетки отправления - позицию короля и в качестве клетки назанчения - клетку за королем, а так же тип фигуры
-                    //при этом еще нужно проверять движение фигуры
-                   /*for (ChessPiece piece : piecesBox) {
-                        if ((kingPiece.getPlayer() == WHITE_PLAYER) && (piece.getPlayer() == BLACK_PLAYER)) {
-                            if (checkIsCheck(piece, pair.getColumn(), pair.getRow()))
-                                moves++;
-
-                        } else if ((kingPiece.getPlayer() == BLACK_PLAYER) && (piece.getPlayer() == WHITE_PLAYER)) {
-                            if (checkIsCheck(piece, pair.getColumn(), pair.getRow()))
-                                moves++;
-
-                        }
-                    }*/
-
-                    /**
-                     * КАРОЧЕ
-                     * ПРОВЕРЯЕТ ОН НЕ КОПИЮ А ОРИГИНАЛ**/
                     nextTurnPiecesBox=new ArrayList<ChessPiece>(piecesBox);
                     ChessPiece newKing = new ChessPiece(kingPiece.getColumn(), kingPiece.getRow(), kingPiece.getPlayer(), kingPiece.getChessman(), kingPiece.getResID());
                     piecesBox.remove(kingPiece);
@@ -535,10 +516,6 @@ public class ChessGame {
                     piecesBox.add(newKing);
                     for (ChessPiece piece : piecesBox) {
                         if ((newKing.getPlayer() == WHITE_PLAYER) && (piece.getPlayer() == BLACK_PLAYER)) {
-                            if ((piece.getColumn()< newKing.getColumn())&&(attackPiece.getColumn()<piece.getColumn()))
-                            {
-                                Log.d(TAG, "Фигура:" + piece.getChessman() + "стоит на пути!!");
-                            }
                             if (checkIsCheck(piece, newKing.getColumn(), newKing.getRow()))
                                 moves++;
                         } else if ((newKing.getPlayer() == BLACK_PLAYER) & (piece.getPlayer() == WHITE_PLAYER)) {
@@ -548,38 +525,32 @@ public class ChessGame {
                         }
                     }
                     piecesBox=new ArrayList<>(nextTurnPiecesBox);
-
                 }
                 else {
-                    int guard_pieces=0;
-                    for (ChessPiece guardPiece : piecesBox)
-                    {
-                        //!!! ничегощеньки тут не работает!!!
-                        if (kingPiece.getPlayer()==WHITE_PLAYER)
-                            if(checkSquareWithPiece(WHITE_PLAYER, BLACK_PLAYER, kingPiece, guardPiece, pair))
-                                guard_pieces++;
 
-                        else if (kingPiece.getPlayer()==BLACK_PLAYER)
-                            if(checkSquareWithPiece(BLACK_PLAYER, WHITE_PLAYER, kingPiece, guardPiece, pair))
-                                guard_pieces++;
+                    if ((pair.getColumn()==attackPiece.getColumn())&&(pair.getRow()==attackPiece.getRow()))
+                    {
+                        Log.d(TAG, "НУ тут можно и прихватить");
+
+                       for (ChessPiece piece : piecesBox)
+                       {
+                           if (piece.getPlayer()==attackPiece.getPlayer())
+                           {
+                               if (canMove(new Square(piece.getColumn(), piece.getRow()), new Square(attackPiece.getColumn(), attackPiece.getRow())))
+                               {
+                                   moves++;
+                                   break;
+                               }
+
+                           }
+                       }
 
                     }
-                    if (guard_pieces==0)
-                    {
+                    else
                         moves++;
-                    }
                 }
 
             }
-
-            //АЛЕРТ! ЕСЛИ дается мат по последней горизонтали/вертикали, то при учете не считается клектка ЗА королем
-            //отюсда размеры не совпадают и пункт скипается
-            //ну короче костыль не работает - теперь на простые шахи агрится
-            //как варик - проверять дважды
-            //.....
-            //if (moves == possibleMoves.size())
-            //
-
             //попытаться сделать две проверки - если обе проваливаются то бан, иначе не бан
             Log.d(TAG, "Moves: " + moves);
             Log.d(TAG, "Possible moves " + possibleMoves.size());
@@ -591,11 +562,14 @@ public class ChessGame {
                     {
                         if (!canProtectNearSquare(attackPiece, piecesBox))
                         {
-
+                            if (!canMove(new Square(kingPiece.getColumn(), kingPiece.getRow()), new Square(attackPiece.getColumn(), attackPiece.getRow())))
+                            {
+                                Log.d(TAG, "ВАМ МАТ!");
+                                return true;
+                            }
                             // нет проверки на то, что можно взять фигуру
                             //добавить сюда ифчик
-                            Log.d(TAG, "ВАМ МАТ!");
-                            return true;
+
                         }
                     }
                 }
@@ -607,8 +581,11 @@ public class ChessGame {
                         if (!canProtectNearSquare(attackPiece, piecesBox))
                         {
                             //надо проверять может ли защитить фигура с несолкьких клеток
-                            Log.d(TAG, "ВАМ МАТ!");
-                            return true;
+                            if (!canMove(new Square(kingPiece.getColumn(), kingPiece.getRow()), new Square(attackPiece.getColumn(), attackPiece.getRow())))
+                            {
+                                Log.d(TAG, "ВАМ МАТ!");
+                                return true;
+                            }
                         }
                     }
                 }
