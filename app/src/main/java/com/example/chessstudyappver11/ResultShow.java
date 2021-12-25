@@ -16,7 +16,7 @@ import androidx.fragment.app.DialogFragment;
 
 
 
-public class DialogFragmentShow extends DialogFragment  {
+public class ResultShow extends DialogFragment  {
     @NonNull
     @Override
 
@@ -48,7 +48,7 @@ public class DialogFragmentShow extends DialogFragment  {
     private String message_one;
     private Activity close_activity;
 
-    public DialogFragmentShow(String title_one, String message_one, Activity close_activity) {
+    public ResultShow(String title_one, String message_one, Activity close_activity) {
         this.title_one = title_one;
         this.message_one = message_one;
         this.close_activity = close_activity;

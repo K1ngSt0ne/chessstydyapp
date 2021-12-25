@@ -67,8 +67,6 @@ public class ParseSquareToNotationMoves {
         //добавить словарь с фигурами
         String notation_string="";
         notation_string+=figure_literal.get(move.getPiece_type());
-           // if (i==move.getPiece_type())
-            //    notation_string+=figure_literal.get(i);
 
         for (int i=0;i<column_literal.size();i++)
         {
@@ -87,39 +85,13 @@ public class ParseSquareToNotationMoves {
         return column;
     }
 
-    public void setColumn(int column) {
-        this.column = column;
-    }
-
     public int getRow() {
         return row;
-    }
-
-    public void setRow(int row) {
-        this.row = row;
-    }
-
-    public int getStart_size() {
-        return start_size;
-    }
-
-    public void setStart_size(int start_size) {
-        this.start_size = start_size;
-    }
-
-    public int getEnd_size() {
-        return end_size;
-    }
-
-    public void setEnd_size(int end_size) {
-        this.end_size = end_size;
     }
 
     public Chessman getPiece_type() {
         return piece_type;
     }
 
-    public void setPiece_type(Chessman piece_type) {
-        this.piece_type = piece_type;
-    }
+
 }

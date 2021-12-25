@@ -3,6 +3,7 @@ package com.example.chessstudyappver11;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentManager;
 
 import java.util.ArrayList;
 
@@ -14,8 +15,8 @@ import static java.lang.Math.abs;
  * запись в файл
  * превращение фигур (с помощью select dialog)
  * взятие на проходе (опционально)
- * подфиксить рокировку (проверка на ход короля/ладьи)
- * корректное отображение победившего/проигравшего (впринципе тоже)
+ * подфиксить рокировку (проверка на ход короля/ладьи) ! done!
+ * корректное отображение победившего/проигравшего (впринципе тоже) ! done!
  * парсер из нотации в позицию
  * */
 
@@ -26,13 +27,14 @@ public class ChessGame {
     private final String TAG = "ChessGame";
     private Player turnPlayer = Player.WHITE;
     private Player turnSecondBoardPlayer;
-    boolean whiteKingCheck = false;
-    boolean blackKingCheck = false;
-    boolean endGame = false;
-    boolean isCastling = false;
-    boolean shortCastling = false;
-    boolean longCastling = false;
-    boolean isMoving= false;
+    private boolean whiteKingCheck = false;
+    private boolean blackKingCheck = false;
+    private boolean endGame = false;
+    private boolean isCastling = false;
+    private boolean shortCastling = false;
+    private boolean longCastling = false;
+    private boolean isMoving= false;
+    private boolean isTransforming = false;
     private boolean canMovingWhileCheck = false;
     private ArrayList<ChessPiece> piecesBox = new ArrayList<>();
     private ArrayList<ChessPiece> nextTurnPiecesBox = new ArrayList<>();
@@ -40,6 +42,9 @@ public class ChessGame {
 
     {
         reset();
+        /*movePiece(1,0,2,2);
+        movePiece(2,0,2,4);
+        movePiece(3,0,2,5);*/
     }
 
     private void clear() {
@@ -49,9 +54,6 @@ public class ChessGame {
     private void addPiece(ChessPiece piece) {
         piecesBox.add(piece);
     }
-
-
-
 
     private boolean isClearVerticallyBetween(Square from, Square to) {
         //нужно починить
@@ -111,8 +113,6 @@ public class ChessGame {
 
         return true;
     }
-
-
 
     private boolean isCheck(ArrayList<ChessPiece> figureList) {
         ChessPiece pieceKing = null;
@@ -328,10 +328,10 @@ public class ChessGame {
 
                 switch (piece.getChessman()) {
                     case KING:
-                        if (canCastling(piece, piecesBox, to))
+                        if (!isCastling)
                         {
-                           // isCastling=true;
-                            return true;
+                            if (canCastling(piece, piecesBox, to))
+                                return true;
                         }
 
                         else
@@ -363,8 +363,6 @@ public class ChessGame {
                 return true;
         return false;
     }
-
-
 
     void movePiece(Square from, Square to) {
         setMoving(false);
@@ -413,6 +411,13 @@ public class ChessGame {
 
                 }
                 else {
+                    if (pieceAt(to).getChessman()==Chessman.PAWN)
+                    {
+                        if (((pieceAt(to).getPlayer()==Player.WHITE)&&(to.getRow()==7))||(((pieceAt(to).getPlayer()==Player.BLACK)&&(to.getRow()==0))))
+                        {
+                            isTransforming=true;
+                        }
+                    }
                     blackKingCheck=false;
                     whiteKingCheck=false;
                 }
@@ -426,6 +431,7 @@ public class ChessGame {
         }
 
     }
+
     private boolean canCastling(ChessPiece kingPiece, ArrayList<ChessPiece> piecesB, Square destination)
     {
         for (ChessPiece piece : piecesB)
@@ -453,6 +459,7 @@ public class ChessGame {
                         {
                             movePiece(piece.getColumn(), piece.getRow(), (piece.getColumn()-2), piece.getRow());
                             shortCastling=true;
+                            isCastling=true;
                             return true;
                         }
                     }
@@ -473,6 +480,7 @@ public class ChessGame {
                         {
                             movePiece(piece.getColumn(), piece.getRow(), (piece.getColumn()+3), piece.getRow());
                             longCastling=true;
+                            isCastling=true;
                             return true;
                         }
                     }
@@ -759,43 +767,6 @@ public class ChessGame {
         return canProtect;
     }
 
-    private boolean checkSquareWithPiece(Player p1, Player p2, ChessPiece kPiece, ChessPiece atkPiece, Pair pair_sq) {
-        //метод который я написал сам но не понимаю зачем я его написал
-        //без него не будет work
-        if ((kPiece.getPlayer() == p1) && (atkPiece.getPlayer() == p2)) {
-            if (checkIsCheck(atkPiece, pair_sq.getColumn(), pair_sq.getRow())) {
-                for (ChessPiece attackedPiece : piecesBox) {
-                    if (attackedPiece.getPlayer() == p1) {
-                        switch (attackedPiece.getChessman()) {
-                            case BISHOP:
-                                if (canBishopMove(new Square(attackedPiece.getColumn(), attackedPiece.getRow()), new Square(pair_sq.getColumn(), pair_sq.getRow())))
-                                    return true;
-                                break;
-                            case PAWN:
-                                if (canPawnMove(new Square(attackedPiece.getColumn(), attackedPiece.getRow()), new Square(pair_sq.getColumn(), pair_sq.getRow())))
-                                    return true;
-                                break;
-                            case ROOK:
-                                if (canRookMove(new Square(attackedPiece.getColumn(), attackedPiece.getRow()), new Square(pair_sq.getColumn(), pair_sq.getRow())))
-                                    return true;
-                                break;
-                            case QUEEN:
-                                if (canQueenMove(new Square(attackedPiece.getColumn(), attackedPiece.getRow()), new Square(pair_sq.getColumn(), pair_sq.getRow())))
-                                    return true;
-                                break;
-                            case KNIGHT:
-                                if (canKnightMove(new Square(attackedPiece.getColumn(), attackedPiece.getRow()), new Square(pair_sq.getColumn(), pair_sq.getRow())))
-                                    return true;
-                                break;
-                        }
-                    }
-                }
-
-            }
-        }
-        return false;
-    }
-
     private void movePiece(Integer fromCol, Integer fromRow, Integer toCol, Integer toRow) {
 
         ChessPiece movingPiece = pieceAt(fromCol, fromRow);
@@ -817,7 +788,6 @@ public class ChessGame {
         addPiece(movingPiece);
         Log.d(TAG, String.valueOf(piecesBox.size()));
     }
-
 
     private void reset() {
         clear();
@@ -884,4 +854,69 @@ public class ChessGame {
     public void setMoving(boolean moving) {
         isMoving = moving;
     }
+
+    public boolean isWhiteKingCheck() {
+        return whiteKingCheck;
+    }
+
+    public void setWhiteKingCheck(boolean whiteKingCheck) {
+        this.whiteKingCheck = whiteKingCheck;
+    }
+
+    public boolean isBlackKingCheck() {
+        return blackKingCheck;
+    }
+
+    public void setBlackKingCheck(boolean blackKingCheck) {
+        this.blackKingCheck = blackKingCheck;
+    }
+
+    public boolean isShortCastling() {
+        return shortCastling;
+    }
+
+    public void setShortCastling(boolean shortCastling) {
+        this.shortCastling = shortCastling;
+    }
+
+    public boolean isLongCastling() {
+        return longCastling;
+    }
+
+    public void setLongCastling(boolean longCastling) {
+        this.longCastling = longCastling;
+    }
+
+    public boolean isTransforming() {
+        return isTransforming;
+    }
+
+    public void setTransforming(boolean transforming) {
+        isTransforming = transforming;
+    }
+
+    public boolean isCanMovingWhileCheck() {
+        return canMovingWhileCheck;
+    }
+
+    public void setCanMovingWhileCheck(boolean canMovingWhileCheck) {
+        this.canMovingWhileCheck = canMovingWhileCheck;
+    }
+
+    public boolean isCastling() {
+        return isCastling;
+    }
+
+    public void setCastling(boolean castling) {
+        isCastling = castling;
+    }
+
+    public ArrayList<ChessPiece> getPiecesBox() {
+        return piecesBox;
+    }
+
+    public void setPiecesBox(ArrayList<ChessPiece> piecesBox) {
+        this.piecesBox = piecesBox;
+    }
 }
+

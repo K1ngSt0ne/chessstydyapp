@@ -3,18 +3,17 @@ package com.example.chessstudyappver11;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
-public class DebutsActivity extends AppCompatActivity implements ChessDelegate{
+public class DebutsActivity extends AppCompatActivity implements ChessDelegate, GettingDataFromDialog{
 
     ChessView mChessView;
     private final String TAG = "ChessGame";
@@ -23,6 +22,10 @@ public class DebutsActivity extends AppCompatActivity implements ChessDelegate{
     TextView historyMoves;
     int turns=1;
     ArrayList<Square> movesHistory = new ArrayList<>(); //вопрос, хранить в таком виде или все таки распарсить во что-то другое
+    private HashMap<String, Chessman> chessman_type= new HashMap<>();
+    private HashMap<String, Integer> white_resID = new HashMap<>();
+    private HashMap<String, Integer> black_resID = new HashMap<>();
+    String chosen_figure="";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,8 +36,7 @@ public class DebutsActivity extends AppCompatActivity implements ChessDelegate{
         mChessView = findViewById(R.id.chess_view);
         mChessView.mChessDelegate=this;
         //написать конвертер координат в нотацию (ходы)
-
-
+        init_chessman_type();
     }
 
 
@@ -53,25 +55,55 @@ public class DebutsActivity extends AppCompatActivity implements ChessDelegate{
             {
                 movesHistory.add(to);
                 historyMovesShow(to, start_size,end_size, piece_type);
+                if (chessGame.isTransforming())
+                {
+                    FragmentManager manager = getSupportFragmentManager();
+                    FigureTransformDialog dialogTransform = new FigureTransformDialog(this);
+                    dialogTransform.show(manager, "transform");
+                    if (!chosen_figure.equals(""))
+                    {
+                        ArrayList<ChessPiece> newPieceBox = chessGame.getPiecesBox();
+                        ChessPiece newFigure = pieceAt(to);
+                        newPieceBox.remove(newFigure);
+                        Chessman newChessman=chessman_type.get(chosen_figure);
+                        ChessPiece newChosenPiece = null;
+                        if (chessGame.getTurnPlayer()==Player.WHITE)
+                        {
+                            Integer resID = black_resID.get(chosen_figure);
+                            newChosenPiece = new ChessPiece(newFigure.getColumn(), newFigure.getRow(), Player.BLACK,newChessman, resID);
+                        }
+                        else if (chessGame.getTurnPlayer()==Player.BLACK)
+                        {
+                            Integer resID = white_resID.get(chosen_figure);
+                            newChosenPiece = new ChessPiece(newFigure.getColumn(), newFigure.getRow(),Player.WHITE, newChessman, resID);
+                        }
+                        newPieceBox.add(newChosenPiece);
+                        chessGame.setPiecesBox(newPieceBox);
+                        chessGame.setTransforming(false);
+                        chosen_figure="";
+                    }
+
+                }
             }
             if (chessGame.isEndGame())
             {
                 String message_text="";
-                if (chessGame.blackKingCheck)
+                if (chessGame.isBlackKingCheck())
                 {
                     message_text="Белые выиграли (объявлен мат)";
                     historyMoves.setText(historyMoves.getText()+" 1-0 ");
                 }
 
-                if (chessGame.whiteKingCheck)
+                if (chessGame.isWhiteKingCheck())
                 {
                     message_text="Черные выиграли (объявлен мат)";
                     historyMoves.setText(historyMoves.getText()+" 0-1 ");
                 }
 
                 FragmentManager manager = getSupportFragmentManager();
-                DialogFragmentShow myDialogFragment = new DialogFragmentShow("Партия закончена",message_text, this);
+                ResultShow myDialogFragment = new ResultShow("Партия закончена",message_text, this);
                 myDialogFragment.show(manager, "myDialog");
+
 
             }
             else
@@ -92,19 +124,17 @@ public class DebutsActivity extends AppCompatActivity implements ChessDelegate{
         {
             if (chessGame.isEndGame())
                 all_moves=historyMoves.getText()+ " "+ turns+move_to_HM+"#";
-            else if (chessGame.blackKingCheck)
+            else if (chessGame.isBlackKingCheck())
                 all_moves=historyMoves.getText()+ " "+ turns+move_to_HM+"+";
-            else if (chessGame.shortCastling)
+            else if ((chessGame.isShortCastling())&&(chessGame.isCastling()))
             {
                 all_moves=historyMoves.getText()+ ""+ turns+" O-O ";
-                chessGame.shortCastling=false;
             }
-            else if (chessGame.longCastling)
+            else if ((chessGame.isLongCastling())&&(chessGame.isCastling()))
             {
                 all_moves=historyMoves.getText() +  "" + turns +" O-O-O ";
-                chessGame.longCastling=false;
+                chessGame.setLongCastling(false);
             }
-
             else
                 all_moves=historyMoves.getText()+ " "+ turns+move_to_HM + " ";
         }
@@ -114,18 +144,17 @@ public class DebutsActivity extends AppCompatActivity implements ChessDelegate{
         {
             if (chessGame.isEndGame())
                 all_moves=historyMoves.getText()+ " "+move_to_HM + "#";
-            else if (chessGame.whiteKingCheck)
+            else if (chessGame.isWhiteKingCheck())
                 all_moves=historyMoves.getText()+ " "+move_to_HM + "+";
-            else if (chessGame.shortCastling)
+            else if ((chessGame.isShortCastling())&&(chessGame.isCastling()))
             {
                 all_moves=historyMoves.getText()+ " O-O ";
-                chessGame.shortCastling=false;
             }
 
-            else if (chessGame.longCastling)
+            else if ((chessGame.isLongCastling())&&(chessGame.isCastling()))
             {
                 all_moves=historyMoves.getText()+ " O-O-O ";
-                chessGame.longCastling=false;
+                chessGame.setLongCastling(false);
             }
 
             else
@@ -134,6 +163,29 @@ public class DebutsActivity extends AppCompatActivity implements ChessDelegate{
 
         }
         historyMoves.setText(all_moves);
+
+    }
+
+    @Override
+    public void getData(String text) {
+       Log.d(TAG, "ВЫбрал фигуру: " + text);
+       chosen_figure=text;
+    }
+
+    void init_chessman_type()
+    {
+        chessman_type.put("Ферзь", Chessman.QUEEN);
+        chessman_type.put("Ладья", Chessman.ROOK);
+        chessman_type.put("Слон", Chessman.BISHOP);
+        chessman_type.put("Конь", Chessman.KNIGHT);
+        black_resID.put("Слон", R.drawable.black_bishop);
+        black_resID.put("Конь", R.drawable.black_knight);
+        black_resID.put("Ладья",R.drawable.black_rook);
+        black_resID.put("Ферзь", R.drawable.black_queen);
+        white_resID.put("Слон", R.drawable.white_bishop);
+        white_resID.put("Конь", R.drawable.white_knight);
+        white_resID.put("Ладья",R.drawable.white_rook);
+        white_resID.put("Ферзь", R.drawable.white_queen);
 
     }
 }
