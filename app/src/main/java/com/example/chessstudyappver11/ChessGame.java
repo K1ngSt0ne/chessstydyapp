@@ -30,21 +30,24 @@ public class ChessGame {
     private boolean whiteKingCheck = false;
     private boolean blackKingCheck = false;
     private boolean endGame = false;
-    private boolean isCastling = false;
+    private boolean isDraw = false;
+    private boolean whiteIsCastling = false;
+    private boolean blackIsCastling = false;
     private boolean shortCastling = false;
     private boolean longCastling = false;
     private boolean isMoving= false;
     private boolean isTransforming = false;
     private boolean canMovingWhileCheck = false;
+    private int movesWithoutTakingFigure = 0;
     private ArrayList<ChessPiece> piecesBox = new ArrayList<>();
     private ArrayList<ChessPiece> nextTurnPiecesBox = new ArrayList<>();
 
 
     {
         reset();
-        /*movePiece(1,0,2,2);
-        movePiece(2,0,2,4);
-        movePiece(3,0,2,5);*/
+        //movePiece(5,1,5,5);
+       // movePiece(5,6,5,2);
+       // movePiece(3,0,2,5);
     }
 
     private void clear() {
@@ -181,9 +184,10 @@ public class ChessGame {
         }
         if (piece.getChessman()==Chessman.PAWN)
             return canPawnMove(new Square(piece.getColumn(),piece.getRow()), new Square(pieceKingColumn, pieceKingRow));
+        if (piece.getChessman()==Chessman.KING)
+            return canKingMove(new Square(piece.getColumn(),piece.getRow()), new Square(pieceKingColumn, pieceKingRow));
         return false;
     }
-
 
     private boolean canKnightMove(Square from, Square to) {
         //Правило: либо на две клетки по вертикали (вверх вниз) + на одну клетку влево/вправо
@@ -193,7 +197,7 @@ public class ChessGame {
     }
 
     private boolean canPawnMove(Square from, Square to) {
-
+        //доделать взяте на проходе
         ChessPiece piecePlayer = pieceAt(from);
         ChessPiece enemyPiece = pieceAt(to);
         if (piecePlayer!=null)
@@ -328,12 +332,15 @@ public class ChessGame {
 
                 switch (piece.getChessman()) {
                     case KING:
-                        if (!isCastling)
+                        if ((!whiteIsCastling)||(!blackIsCastling))
                         {
-                            if (canCastling(piece, piecesBox, to))
+                            if ((piece.getPlayer()==Player.BLACK)&&(canCastling(piece, piecesBox, to)))
                                 return true;
+                            else if ((piece.getPlayer()==Player.WHITE)&&(canCastling(piece, piecesBox, to)))
+                                return true;
+                            else
+                                return canKingMove(from, to);
                         }
-
                         else
                             return canKingMove(from, to);
                     case PAWN:
@@ -379,6 +386,15 @@ public class ChessGame {
 
             }
             else {
+
+                if (pieceAt(to).getChessman()==Chessman.PAWN)
+                {
+                    if (((pieceAt(to).getPlayer()==Player.WHITE)&&(to.getRow()==7))||(((pieceAt(to).getPlayer()==Player.BLACK)&&(to.getRow()==0))))
+                    {
+                        isTransforming=true;
+                    }
+                }
+
                 if ((turnPlayer==WHITE_PLAYER)&&(isCheck(piecesBox)))
                 {
                     if (checkMate(findEnemyKing(turnPlayer)))
@@ -410,17 +426,22 @@ public class ChessGame {
                     whiteKingCheck=true;
 
                 }
-                else {
-                    if (pieceAt(to).getChessman()==Chessman.PAWN)
+                else if (pieceAt(to).getChessman()==Chessman.PAWN)
                     {
                         if (((pieceAt(to).getPlayer()==Player.WHITE)&&(to.getRow()==7))||(((pieceAt(to).getPlayer()==Player.BLACK)&&(to.getRow()==0))))
                         {
                             isTransforming=true;
                         }
                     }
+
+                else if (checkDraw())
+                    isDraw=true;
+                else
+                {
                     blackKingCheck=false;
                     whiteKingCheck=false;
                 }
+;
                 turnPlayer= switchPlayer(turnPlayer);
                 canMovingWhileCheck=false;
             }
@@ -431,6 +452,85 @@ public class ChessGame {
         }
 
     }
+
+
+    private boolean checkDraw()
+    {
+        /*Ситуации, при которых возникает ничья:
+        1. На доске 2 короля (готово)
+        2. На доске 2 короля И слон (готово)
+        3. На доске 2 короля И конь (готово)
+        4. На доске 2 короля и 2  и более слона (если они одного цвета)
+        5. На доске пат (когда одна сторона сделала ход, а другой нет возможных ходов)
+        6. Правило 50 ходов - не взята ни одна фигура и не двинута ни одна пешка
+        7. Троекратное повторение позиции (здесь если позиция была, и затем она повторилась два раза подряд)
+        т.е.
+        если
+        Кре2 Кре7
+        Кре1 Кре8
+        ----какие-то ходы-------
+        Кре2 Кре7
+        Кре1 Кре8
+        Кре2 Кре7
+        Кре1 Кре8
+        то это ничья!
+        В независимоти от числа ходов!
+        т.е. нужно искать по последней существующей позиции (ну т.е. если позиция появилась 1 раз, потом прошло n число ходов и она потворилась дважды, то тогда бан)
+        * */
+        if (pieceBoxSize()==2)
+            return true;
+        if (pieceBoxSize()==3)
+        {
+            for (ChessPiece piece : piecesBox)
+            {
+                if ((piece.getChessman()==Chessman.BISHOP)||(piece.getChessman()==Chessman.KNIGHT))
+                    return true;
+            }
+        }
+        if (movesWithoutTakingFigure==100) // нужно проврить что пешки не ходили и фигуры не брались
+            return true;
+        if (checkStalemate())
+            return true;
+        if (checkThreefoldMoves())
+            return true;
+
+
+        return false;
+    }
+    private boolean checkStalemate() //проверка на пат
+    {
+        //впринципе надо юзать методы которые я использвал для проверки мата - поиска возможноных клеток
+        //ну разве что надо проверить не может ликак нибудь фигура ходить
+        //можно заюзать партию где чел превратил 2 ферзя и пат объявил
+        return checkMate(findEnemyKing(turnPlayer)); //добавить проверку attackPiece на null + пешки пофиксить
+    }
+
+
+    /*
+    1. e4 Nf6 2. Qf3 e5 3. Bc4 g6 4. d3 a6 5. Bg5 Be7 6. Nc3 b5 7. Bb3 c6 8. Nge2 a5
+9. a4 bxa4 10. Rxa4 Na6 11. Rc4 h6 12. Bh4 Nc5 13. Rxc5 Bxc5 14. Bxf6 Qb6 15.
+Bxh8 Bxf2+ 16. Qxf2 Qxf2+ 17. Kxf2 Bb7 18. Bxe5 O-O-O 19. Ra1 f5 20. exf5 gxf5
+21. Rxa5 d5 22. Ra8+ Bxa8 23. Ng3 d4 24. Nce2 c5 25. Nxf5 Re8 26. Bf4 Rf8 27.
+Nxh6 Kb7 28. Bd5+ Ka7 29. Bxa8 Kxa8 30. Kg1 Kb7 31. Bd6 Rc8 32. b4 Kc6 33. Bxc5
+Kb5 34. Nxd4+ Ka4 35. Nhf5 Ka3 36. h4 Kb2 37. h5 Kc1 38. h6 Kd2 39. g4 Kc3 40.
+g5 Ra8 41. g6 Ra1+ 42. Kg2 Ra8 43. h7 Rh8 44. g7 Rxh7 45. g8=Q Rh5 46. Qc4+ Kd2
+47. Nf3+ Ke2 48. Qe4+ Kd1 49. Qe1+ Kxc2 50. Qe2+ Kc3 51. Bd4+ Kxb4 52. Qb2+ Ka5
+53. Qb6+ Ka4 54. Qc6+ Ka5 55. Qc5+ Ka4 56. Qc4+ Ka5 57. Qc5+ Ka4 58. Qc6+ Ka5
+59. Bb6+ Kb4 60. Bc5+ Kc3 61. Ne1 Rxf5 62. Be3+ Kb4 63. Qd6+ Kb3 64. Qe6+ Kc3
+65. Qxf5 Kb4 66. Qe4+ Kb5 67. Qc4+ Ka5 68. d4 Kb6 69. d5+ Kb7 70. d6 Kb8 71. d7
+Kb7 72. d8=Q 1/2-1/2
+*/
+
+
+
+
+
+
+    private boolean checkThreefoldMoves()
+    {
+        return false;
+    }
+
 
     private boolean canCastling(ChessPiece kingPiece, ArrayList<ChessPiece> piecesB, Square destination)
     {
@@ -459,7 +559,10 @@ public class ChessGame {
                         {
                             movePiece(piece.getColumn(), piece.getRow(), (piece.getColumn()-2), piece.getRow());
                             shortCastling=true;
-                            isCastling=true;
+                            if (kingPiece.getPlayer()==Player.WHITE)
+                                whiteIsCastling=true;
+                            else if (kingPiece.getPlayer()==Player.BLACK)
+                                blackIsCastling=true;
                             return true;
                         }
                     }
@@ -480,7 +583,10 @@ public class ChessGame {
                         {
                             movePiece(piece.getColumn(), piece.getRow(), (piece.getColumn()+3), piece.getRow());
                             longCastling=true;
-                            isCastling=true;
+                            if (kingPiece.getPlayer()==Player.WHITE)
+                                whiteIsCastling=true;
+                            else if (kingPiece.getPlayer()==Player.BLACK)
+                                blackIsCastling=true;
                             return true;
                         }
                     }
@@ -535,34 +641,37 @@ public class ChessGame {
                     piecesBox=new ArrayList<>(nextTurnPiecesBox);
                 }
                 else {
-
-                    if ((pair.getColumn()==attackPiece.getColumn())&&(pair.getRow()==attackPiece.getRow()))
+                    if (attackPiece!=null)
                     {
-                        Log.d(TAG, "НУ тут можно и прихватить");
+                        if ((pair.getColumn()==attackPiece.getColumn())&&(pair.getRow()==attackPiece.getRow()))
+                        {
+                            Log.d(TAG, "НУ тут можно и прихватить");
 
-                       for (ChessPiece piece : piecesBox)
-                       {
-                           if (piece.getPlayer()==attackPiece.getPlayer())
-                           {
-                               if (canMove(new Square(piece.getColumn(), piece.getRow()), new Square(attackPiece.getColumn(), attackPiece.getRow())))
-                               {
-                                   moves++;
-                                   break;
-                               }
+                            for (ChessPiece piece : piecesBox)
+                            {
+                                if (piece.getPlayer()==attackPiece.getPlayer())
+                                {
+                                    if (canMove(new Square(piece.getColumn(), piece.getRow()), new Square(attackPiece.getColumn(), attackPiece.getRow())))
+                                    {
+                                        moves++;
+                                        break;
+                                    }
 
-                           }
-                       }
+                                }
+                            }
 
+                        }
+                        else
+                            moves++;
                     }
-                    else
-                        moves++;
+
                 }
 
             }
             //попытаться сделать две проверки - если обе проваливаются то бан, иначе не бан
             Log.d(TAG, "Moves: " + moves);
             Log.d(TAG, "Possible moves " + possibleMoves.size());
-            if (moves >= possibleMoves.size()) {
+            if (moves == possibleMoves.size()) {
 
                 if (kingPiece.getPlayer()==WHITE_PLAYER)
                 {
@@ -903,12 +1012,20 @@ public class ChessGame {
         this.canMovingWhileCheck = canMovingWhileCheck;
     }
 
-    public boolean isCastling() {
-        return isCastling;
+    public boolean isWhiteIsCastling() {
+        return whiteIsCastling;
     }
 
-    public void setCastling(boolean castling) {
-        isCastling = castling;
+    public void setWhiteIsCastling(boolean whiteIsCastling) {
+        this.whiteIsCastling = whiteIsCastling;
+    }
+
+    public boolean isBlackIsCastling() {
+        return blackIsCastling;
+    }
+
+    public void setBlackIsCastling(boolean blackIsCastling) {
+        this.blackIsCastling = blackIsCastling;
     }
 
     public ArrayList<ChessPiece> getPiecesBox() {
@@ -917,6 +1034,14 @@ public class ChessGame {
 
     public void setPiecesBox(ArrayList<ChessPiece> piecesBox) {
         this.piecesBox = piecesBox;
+    }
+
+    public boolean isDraw() {
+        return isDraw;
+    }
+
+    public void setDraw(boolean draw) {
+        isDraw = draw;
     }
 }
 

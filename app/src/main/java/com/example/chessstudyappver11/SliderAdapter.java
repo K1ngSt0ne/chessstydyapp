@@ -94,16 +94,15 @@ public class SliderAdapter extends RecyclerView.Adapter<SliderAdapter.SliderView
               //  itemView.getContext().startActivity(intent);
                 break;
             case "К дебютам!":
-                Intent intent = new Intent(itemView.getContext(), DebutsActivity.class);
-                itemView.getContext().startActivity(intent);
+
                 break;
             case "К знаниям":
               //  Intent intent = new Intent(itemView.getContext(), DebutsActivity.class);
               //  itemView.getContext().startActivity(intent);
                 break;
             case "Начать!":
-                //  Intent intent = new Intent(itemView.getContext(), DebutsActivity.class);
-                //  itemView.getContext().startActivity(intent);
+                Intent intent = new Intent(itemView.getContext(), PlayBoardActivity.class);
+                itemView.getContext().startActivity(intent);
                 break;
         }
     }

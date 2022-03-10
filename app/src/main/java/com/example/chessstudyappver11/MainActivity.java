@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
 
         sliderItems.add(new SliderItem(R.drawable.debuts,"Дебюты", "изучаем первые ходы", "К дебютам!")); //дебюты
         sliderItems.add(new SliderItem(R.drawable.headpic,"Уроки", "выбрать урок", "К знаниям!")); //все уроки
-        sliderItems.add(new SliderItem(R.drawable.computer,"Сыграть", "с компьютером", "Начать!")); // сыграть с компьютером
+        sliderItems.add(new SliderItem(R.drawable.computer,"Сыграть", "с самим собой ", "Начать!")); // сыграть с компьютером
 
         mViewPager2.setAdapter(new SliderAdapter(sliderItems, mViewPager2));
         mViewPager2.setClipChildren(false);
