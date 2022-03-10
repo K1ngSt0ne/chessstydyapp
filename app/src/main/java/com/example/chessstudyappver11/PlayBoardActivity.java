@@ -3,9 +3,6 @@ package com.example.chessstudyappver11;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 
-import android.annotation.SuppressLint;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
@@ -31,7 +28,7 @@ public class PlayBoardActivity extends AppCompatActivity implements ChessDelegat
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_debuts);
+        setContentView(R.layout.activity_play);
         //statusBar = findViewById(R.id.textViewGameStatus);
         historyMoves = findViewById(R.id.historyMoves);
         historyMoves.setMovementMethod(new ScrollingMovementMethod());

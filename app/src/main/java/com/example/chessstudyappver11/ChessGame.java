@@ -13,11 +13,10 @@ import static java.lang.Math.abs;
  * Что еще необходимо сделать:
  * история ходов (частично есть)
  * запись в файл
- * превращение фигур (с помощью select dialog)
  * взятие на проходе (опционально)
- * подфиксить рокировку (проверка на ход короля/ладьи) ! done!
  * корректное отображение победившего/проигравшего (впринципе тоже) ! done!
  * парсер из нотации в позицию
+ * сделать ничьи
  * */
 
 
@@ -45,9 +44,28 @@ public class ChessGame {
 
     {
         reset();
-        //movePiece(5,1,5,5);
-       // movePiece(5,6,5,2);
-       // movePiece(3,0,2,5);
+        movePiece(4,1,4,2);//e3
+        movePiece(0,6,0,4);//a5
+        movePiece(3,0,7,4);//Qh5
+        movePiece(0,7,0,5);//Ra5
+        movePiece(7,4,0,4);//Qxa5
+        movePiece(7,6,7,4);//h5
+        movePiece(0,4,2,6);//Qxc7
+        movePiece(0,5,7,5);//Rah6
+        movePiece(7,1,7,3);//h4
+        movePiece(5,6,5,5);//f6
+        movePiece(2,6,3,6);//Qxd7+
+        movePiece(4,7,5,6);//Kf7
+        movePiece(3,6,1,6);//Qxb7
+        movePiece(3,7,3,2);//Qd3
+        movePiece(1,6,1,7);//Qxb8
+        movePiece(3,2,7,6);//Qh7
+        movePiece(1,7,2,7);//Qxc8
+        movePiece(5,6,6,5);//Kg6
+
+
+
+
     }
 
     private void clear() {
@@ -198,8 +216,10 @@ public class ChessGame {
 
     private boolean canPawnMove(Square from, Square to) {
         //доделать взяте на проходе
+        //запретить пешкам скакать друг через друга
         ChessPiece piecePlayer = pieceAt(from);
         ChessPiece enemyPiece = pieceAt(to);
+
         if (piecePlayer!=null)
         {
             int fromRow = from.getRow();
@@ -210,7 +230,7 @@ public class ChessGame {
             {
                 if (from.getColumn()==to.getColumn())
                 {
-                    if (enemyPiece!=null)
+                    if ((enemyPiece!=null)||((fromRow+2==toRow)&&(pieceAt(toColumn, toRow-1)!=null)))
                     {
                         return false;
                     }
@@ -242,7 +262,7 @@ public class ChessGame {
             {
                 if (from.getColumn()==to.getColumn())
                 {
-                    if (enemyPiece!=null)
+                    if ((enemyPiece!=null)||((fromRow-2==toRow)&&(pieceAt(toColumn, toRow+1)!=null)))
                     {
                         return false;
                     }
@@ -501,8 +521,63 @@ public class ChessGame {
     {
         //впринципе надо юзать методы которые я использвал для проверки мата - поиска возможноных клеток
         //ну разве что надо проверить не может ликак нибудь фигура ходить
-        //можно заюзать партию где чел превратил 2 ферзя и пат объявил
-        return checkMate(findEnemyKing(turnPlayer)); //добавить проверку attackPiece на null + пешки пофиксить
+        //return checkMate(findEnemyKing(turnPlayer)); //добавить проверку attackPiece на null + пешки пофиксить
+        ChessPiece kingPiece = findEnemyKing(turnPlayer);
+        if (kingPiece.getChessman() == Chessman.KING) {
+            ArrayList<Pair> possibleMoves = new ArrayList<>();
+            //найдем возможные ходы для короля и добавим их в массив
+            for (int i = kingPiece.getRow() - 1; i <= kingPiece.getRow() + 1; i++) {
+                for (int j = kingPiece.getColumn() - 1; j <= kingPiece.getColumn() + 1; j++) {
+                    if ((i >= 0 && i <= 7) && (j >= 0 && j <= 7)) {
+                        if (canKingMove(new Square(kingPiece.getColumn(), kingPiece.getRow()), new Square(j, i)))
+                            possibleMoves.add(new Pair(i, j));
+                    }
+                }
+            }
+            Log.d(TAG, "Число возможных ходов: " + possibleMoves.size());
+            int moves = 0;
+            int ally_figure=0;
+            //чекаем пат
+            for (Pair pair : possibleMoves) {
+                //сюда нам надо!
+                ChessPiece pieceFree = pieceAt(pair.getColumn(), pair.getRow());
+                if (pieceFree == null) //если пустая клетка проерит что она под боем
+                {
+                    nextTurnPiecesBox=new ArrayList<ChessPiece>(piecesBox);
+                    ChessPiece newKing = new ChessPiece(kingPiece.getColumn(), kingPiece.getRow(), kingPiece.getPlayer(), kingPiece.getChessman(), kingPiece.getResID());
+                    piecesBox.remove(kingPiece);
+                    newKing.setColumn(pair.getColumn());
+                    newKing.setRow(pair.getRow());
+                    piecesBox.add(newKing);
+                    for (ChessPiece piece : piecesBox) {
+                        if ((newKing.getPlayer() == WHITE_PLAYER) && (piece.getPlayer() == BLACK_PLAYER)) {
+                            if (checkIsCheck(piece, newKing.getColumn(), newKing.getRow()))
+                                moves++;
+                        } else if ((newKing.getPlayer() == BLACK_PLAYER) & (piece.getPlayer() == WHITE_PLAYER)) {
+                            if (checkIsCheck(piece, newKing.getColumn(), newKing.getRow()))
+                                moves++;
+
+                        }
+                    }
+                    piecesBox=new ArrayList<>(nextTurnPiecesBox);
+                }
+                else
+                {
+                    if (pieceFree.getPlayer()==kingPiece.getPlayer())
+                       ally_figure++;
+                }
+            }
+            Log.d(TAG, "Битые клетки: " + moves);
+            Log.d(TAG, "Занятые клетки союзными фигурами " + ally_figure);
+            if (moves+ally_figure==possibleMoves.size())
+            {
+                Log.d(TAG,"ПААААТ!!");
+                return true;
+            }
+        }
+
+
+        return false;
     }
 
 
@@ -526,7 +601,7 @@ Kb7 72. d8=Q 1/2-1/2
 
 
 
-    private boolean checkThreefoldMoves()
+    private boolean checkThreefoldMoves() //требует доработки
     {
         return false;
     }
@@ -641,7 +716,7 @@ Kb7 72. d8=Q 1/2-1/2
                     piecesBox=new ArrayList<>(nextTurnPiecesBox);
                 }
                 else {
-                    if (attackPiece!=null)
+                    if (attackPiece!=null) //если есть атакующая фигура
                     {
                         if ((pair.getColumn()==attackPiece.getColumn())&&(pair.getRow()==attackPiece.getRow()))
                         {
@@ -668,7 +743,7 @@ Kb7 72. d8=Q 1/2-1/2
                 }
 
             }
-            //попытаться сделать две проверки - если обе проваливаются то бан, иначе не бан
+            //попытаться сделать две проверки - если обе проваливаются то мат, иначе не мат
             Log.d(TAG, "Moves: " + moves);
             Log.d(TAG, "Possible moves " + possibleMoves.size());
             if (moves == possibleMoves.size()) {
