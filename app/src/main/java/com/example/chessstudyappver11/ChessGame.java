@@ -44,7 +44,7 @@ public class ChessGame {
 
     {
         reset();
-        movePiece(4,1,4,2);//e3
+       /* movePiece(4,1,4,2);//e3
         movePiece(0,6,0,4);//a5
         movePiece(3,0,7,4);//Qh5
         movePiece(0,7,0,5);//Ra5
@@ -61,11 +61,7 @@ public class ChessGame {
         movePiece(1,6,1,7);//Qxb8
         movePiece(3,2,7,6);//Qh7
         movePiece(1,7,2,7);//Qxc8
-        movePiece(5,6,6,5);//Kg6
-
-
-
-
+        movePiece(5,6,6,5);//Kg6*/
     }
 
     private void clear() {
