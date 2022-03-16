@@ -10,7 +10,7 @@
         android:id="@+id/textViewGame"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Игра с компьютером"
+        android:text="Из рук в руки"
         android:textAlignment="center"
         android:textSize="25dp" />
 
