@@ -10,8 +10,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Chessstudyappver11">
         <activity
+            android:name=".DebutsChosenMenu"
+            android:exported="false" />
+        <activity
+            android:name=".DebutsMenuActivity"
+            android:exported="false" />
+        <activity
             android:name=".LessonPractiseActivity"
             android:exported="false" />
+        <activity android:name=".LessonActivity" />
         <activity
             android:name=".LessonsListActivity"
             android:exported="false" />

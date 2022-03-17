@@ -27,9 +27,7 @@ public class TopicLessonsActivity extends AppCompatActivity {
         TopicLessonsAdapter.OnTopicLessonClickListener tlClickListener = new TopicLessonsAdapter.OnTopicLessonClickListener() {
             @Override
             public void onTopicLessonClick(TopicLesson topicLesson, int position) {
-                Intent intent = new Intent(TopicLessonsActivity.this, LessonsListActivity.class);
-                startActivity(intent);
-                finish();
+                goToLessonList(position);
             }
         };
         TopicLessonsAdapter adapter = new TopicLessonsAdapter(listTopicLessons, tlClickListener);
@@ -47,10 +45,39 @@ public class TopicLessonsActivity extends AppCompatActivity {
         listTopicLessons.add(new TopicLesson("Шахматная стратегия", "Узнайте основные приемы шахматной стратегии", R.drawable.debuts));
 
     }
+    void goToLessonList(int position)
+    {
+        Intent intent = new Intent(TopicLessonsActivity.this, LessonsListActivity.class);
+        switch (position)
+        {
+            case 0:
+                intent.putExtra("topic_chosen","chess_rules");
+                break;
+            case 1:
+                intent.putExtra("topic_chosen","move_figure");
+                break;
+            case 2:
+                intent.putExtra("topic_chosen","game_stages");
+                break;
+            case 3:
+                intent.putExtra("topic_chosen","chess_rules_prof");
+                break;
+            case 4:
+                intent.putExtra("topic_chosen","chess_tactic");
+                break;
+            case 5:
+                intent.putExtra("topic_chosen","chess_strategy");
+                break;
+        }
+        startActivity(intent);
+        finish();
+
+    }
     public void returnToMainScreen(View v)
     {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
         finish();
     }
+
 }
