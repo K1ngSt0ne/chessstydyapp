@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import java.util.ArrayList;
@@ -37,6 +38,20 @@ public class DebutsMenuActivity extends AppCompatActivity {
     }
     void goToChosenDebutsList(int position)
     {
-
+        Intent chosen_type = new Intent(this, DebutsChosenMenu.class);
+        switch (position)
+        {
+            case 0:
+                chosen_type.putExtra("chosen_type_debuts","open");
+                break;
+            case 1:
+                chosen_type.putExtra("chosen_type_debuts","closed");
+                break;
+            case 2:
+                chosen_type.putExtra("chosen_type_debuts","subopen");
+                break;
+        }
+        startActivity(chosen_type);
+        finish();
     }
 }

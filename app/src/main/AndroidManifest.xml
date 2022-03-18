@@ -10,6 +10,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Chessstudyappver11">
         <activity
+            android:name=".DebutsReviewActivity"
+            android:exported="false" />
+        <activity
             android:name=".DebutsChosenMenu"
             android:exported="false" />
         <activity

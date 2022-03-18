@@ -7,7 +7,7 @@
     tools:context=".DebutsChosenMenu">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/topic_lesson_recycler"
+        android:id="@+id/debuts_chosen_recycler"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginBottom="55dp"
