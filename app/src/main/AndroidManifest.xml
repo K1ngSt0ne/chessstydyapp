@@ -10,6 +10,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Chessstudyappver11">
         <activity
+            android:name=".TaskSolvingActivity"
+            android:exported="false" />
+        <activity
+            android:name=".TasksMenuActivity"
+            android:exported="false" />
+        <activity
             android:name=".DebutsReviewActivity"
             android:exported="false" />
         <activity

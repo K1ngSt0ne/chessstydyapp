@@ -64,7 +64,7 @@ public class ChessGame {
         movePiece(5,6,6,5);//Kg6*/
     }
 
-    private void clear() {
+    public void clear() {
         piecesBox.clear();
     }
 
@@ -576,27 +576,6 @@ public class ChessGame {
         return false;
     }
 
-
-    /*
-    1. e4 Nf6 2. Qf3 e5 3. Bc4 g6 4. d3 a6 5. Bg5 Be7 6. Nc3 b5 7. Bb3 c6 8. Nge2 a5
-9. a4 bxa4 10. Rxa4 Na6 11. Rc4 h6 12. Bh4 Nc5 13. Rxc5 Bxc5 14. Bxf6 Qb6 15.
-Bxh8 Bxf2+ 16. Qxf2 Qxf2+ 17. Kxf2 Bb7 18. Bxe5 O-O-O 19. Ra1 f5 20. exf5 gxf5
-21. Rxa5 d5 22. Ra8+ Bxa8 23. Ng3 d4 24. Nce2 c5 25. Nxf5 Re8 26. Bf4 Rf8 27.
-Nxh6 Kb7 28. Bd5+ Ka7 29. Bxa8 Kxa8 30. Kg1 Kb7 31. Bd6 Rc8 32. b4 Kc6 33. Bxc5
-Kb5 34. Nxd4+ Ka4 35. Nhf5 Ka3 36. h4 Kb2 37. h5 Kc1 38. h6 Kd2 39. g4 Kc3 40.
-g5 Ra8 41. g6 Ra1+ 42. Kg2 Ra8 43. h7 Rh8 44. g7 Rxh7 45. g8=Q Rh5 46. Qc4+ Kd2
-47. Nf3+ Ke2 48. Qe4+ Kd1 49. Qe1+ Kxc2 50. Qe2+ Kc3 51. Bd4+ Kxb4 52. Qb2+ Ka5
-53. Qb6+ Ka4 54. Qc6+ Ka5 55. Qc5+ Ka4 56. Qc4+ Ka5 57. Qc5+ Ka4 58. Qc6+ Ka5
-59. Bb6+ Kb4 60. Bc5+ Kc3 61. Ne1 Rxf5 62. Be3+ Kb4 63. Qd6+ Kb3 64. Qe6+ Kc3
-65. Qxf5 Kb4 66. Qe4+ Kb5 67. Qc4+ Ka5 68. d4 Kb6 69. d5+ Kb7 70. d6 Kb8 71. d7
-Kb7 72. d8=Q 1/2-1/2
-*/
-
-
-
-
-
-
     private boolean checkThreefoldMoves() //требует доработки
     {
         return false;
@@ -1103,6 +1082,7 @@ Kb7 72. d8=Q 1/2-1/2
         return piecesBox;
     }
 
+
     public void setPiecesBox(ArrayList<ChessPiece> piecesBox) {
         this.piecesBox = piecesBox;
     }
@@ -1114,5 +1094,7 @@ Kb7 72. d8=Q 1/2-1/2
     public void setDraw(boolean draw) {
         isDraw = draw;
     }
+
+
 }
 
