@@ -24,7 +24,7 @@ public class DebutsChosenMenu extends AppCompatActivity {
         TopicLessonsAdapter.OnTopicLessonClickListener lClickListener = new TopicLessonsAdapter.OnTopicLessonClickListener() {
             @Override
             public void onTopicLessonClick(TopicLesson topicLesson, int position) {
-                Intent intent = new Intent(DebutsChosenMenu.this, LessonActivity.class);
+                Intent intent = new Intent(DebutsChosenMenu.this, DebutsReviewActivity.class);
                 startActivity(intent);
                 finish();
             }

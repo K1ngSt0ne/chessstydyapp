@@ -32,7 +32,7 @@ public class PlayBoardActivity extends AppCompatActivity implements ChessDelegat
         //statusBar = findViewById(R.id.textViewGameStatus);
         historyMoves = findViewById(R.id.historyMoves);
         historyMoves.setMovementMethod(new ScrollingMovementMethod());
-        mChessView = findViewById(R.id.chess_task_view);
+        mChessView = findViewById(R.id.chess_view);
         mChessView.mChessDelegate=this;
         //написать конвертер координат в нотацию (ходы)
         init_chessman_type();

@@ -10,7 +10,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -32,7 +31,7 @@ public class TaskSolvingActivity extends AppCompatActivity implements ChessDeleg
         //следующие 2 строки чтобы убрать action bar (верхнюю панель) с экрана
         ActionBar actionBar = getSupportActionBar();
         actionBar.hide();
-        mTextView = (TextView) findViewById(R.id.textTask);
+        mTextView = (TextView) findViewById(R.id.textDebut);
         //бандл необходим нам для получение выбранной темы задач с предыдущего экрана (активности)
         Bundle arguments = getIntent().getExtras();
         //получаем json строку из файла
