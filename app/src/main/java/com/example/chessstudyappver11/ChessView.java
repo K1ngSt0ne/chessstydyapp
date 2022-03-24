@@ -23,14 +23,12 @@ import java.util.List;
 
 public class ChessView extends View {
 
-    private float scaleFactor = 1.0f;
+    private float scaleFactor = 0.9f;
     private float originX = 20f;
     private float originY = 200f;
     private float cellSide = 130f;
     private final String TAG = "ChessView";
-    //private int lightColor = Color.WHITE;
     private int lightColor = Color.parseColor("#ede58a");
-  //  private int darkColor = Color.BLACK;
     private int darkColor = Color.parseColor("#a3610a");
 
     private HashMap<Integer, Bitmap> bitmaps = new HashMap<>();

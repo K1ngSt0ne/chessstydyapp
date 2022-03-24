@@ -36,7 +36,7 @@ public class TasksMenuActivity extends AppCompatActivity {
         taskList.add(new TopicLesson("Мат в 1 ход", "Решение задач, где нужно посавить мат за 1 ход", R.drawable.figure));
         taskList.add(new TopicLesson("Мат в 2 хода", "Решение задач, где нужно посавить мат за 2 хода", R.drawable.figure));
         taskList.add(new TopicLesson("Мат в 3 хода", "Решение задач, где нужно посавить мат за 3 хода", R.drawable.figure));
-        taskList.add(new TopicLesson("Мат слоном и ладьей", "Решение задач, где нужно поставить мат ладьей и конем", R.drawable.figure));
+        taskList.add(new TopicLesson("Мат ладьей и конем", "Решение задач, где нужно поставить мат ладьей и конем", R.drawable.figure));
         taskList.add(new TopicLesson("Мат с жертвой фигуры", "Решение задач, где нужно поставить мат, пожертвовав фигуру", R.drawable.figure));
     }
     void goToChosenTask(int pos)
