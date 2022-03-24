@@ -45,19 +45,19 @@ public class TasksMenuActivity extends AppCompatActivity {
         switch (pos)
         {
             case 0:
-                chosen_type.putExtra("chosen_type_task","one_move_mate");
+                chosen_type.putExtra("chosen_type_task",0);
                 break;
             case 1:
-                chosen_type.putExtra("chosen_type_task","two_move_mate");
+                chosen_type.putExtra("chosen_type_task",1);
                 break;
             case 2:
-                chosen_type.putExtra("chosen_type_task","three_move_mate");
+                chosen_type.putExtra("chosen_type_task",2);
                 break;
             case 3:
-                chosen_type.putExtra("chosen_type_task","mate_with_N_and_R");
+                chosen_type.putExtra("chosen_type_task",3);
                 break;
             case 4:
-                chosen_type.putExtra("chosen_type_task","mate_with_sacrifice");
+                chosen_type.putExtra("chosen_type_task",4);
                 break;
         }
         startActivity(chosen_type);
