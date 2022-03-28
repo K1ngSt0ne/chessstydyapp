@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
+import androidx.annotation.ColorInt;
 import androidx.cardview.widget.CardView;
 
 import org.w3c.dom.Attr;
@@ -28,8 +29,8 @@ public class ChessView extends View {
     private float originY = 200f;
     private float cellSide = 130f;
     private final String TAG = "ChessView";
-    private int lightColor = Color.parseColor("#ede58a");
-    private int darkColor = Color.parseColor("#a3610a");
+    private @ColorInt int lightColor;
+    private @ColorInt int darkColor;
 
     private HashMap<Integer, Bitmap> bitmaps = new HashMap<>();
 
@@ -47,7 +48,8 @@ public class ChessView extends View {
 
     public ChessView(Context context, AttributeSet attributeSet){
         super(context, attributeSet);
-
+        darkColor = context.getColor(R.color.design_default_color_primary_dark);
+        lightColor = context.getColor(R.color.design_default_color_primary);
     }
 
     {

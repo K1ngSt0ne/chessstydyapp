@@ -3,32 +3,13 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Vedro_lab/ChessStydyApp/chessstudyappver11/app/src/main/res/layout/activity_debuts.xml" value="0.33" />
-        <entry key="..\:/Vedro_lab/ChessStydyApp/chessstudyappver11/app/src/main/res/layout/activity_debuts_chosen_menu.xml" value="0.34646739130434784" />
-        <entry key="..\:/Vedro_lab/ChessStydyApp/chessstudyappver11/app/src/main/res/layout/activity_debuts_menu.xml" value="0.34646739130434784" />
-        <entry key="..\:/Vedro_lab/ChessStydyApp/chessstudyappver11/app/src/main/res/layout/activity_debuts_review.xml" value="0.34148550724637683" />
-        <entry key="..\:/Vedro_lab/ChessStydyApp/chessstudyappver11/app/src/main/res/layout/activity_lesson.xml" value="0.36666666666666664" />
-        <entry key="..\:/Vedro_lab/ChessStydyApp/chessstudyappver11/app/src/main/res/layout/activity_lesson_practise.xml" value="0.36666666666666664" />
-        <entry key="..\:/Vedro_lab/ChessStydyApp/chessstudyappver11/app/src/main/res/layout/activity_lessons.xml" value="0.36666666666666664" />
-        <entry key="..\:/Vedro_lab/ChessStydyApp/chessstudyappver11/app/src/main/res/layout/activity_lessons_topic.xml" value="0.2375" />
-        <entry key="..\:/Vedro_lab/ChessStydyApp/chessstudyappver11/app/src/main/res/layout/activity_main.xml" value="0.25" />
-        <entry key="..\:/Vedro_lab/ChessStydyApp/chessstudyappver11/app/src/main/res/layout/activity_play.xml" value="0.2265625" />
-        <entry key="..\:/Vedro_lab/ChessStydyApp/chessstudyappver11/app/src/main/res/layout/activity_task_solving.xml" value="0.25" />
-        <entry key="..\:/Vedro_lab/ChessStydyApp/chessstudyappver11/app/src/main/res/layout/activity_tasks_menu.xml" value="0.2957427536231884" />
-        <entry key="..\:/Vedro_lab/ChessStydyApp/chessstudyappver11/app/src/main/res/layout/activity_topic_lessons.xml" value="0.33" />
-        <entry key="..\:/Vedro_lab/ChessStydyApp/chessstudyappver11/app/src/main/res/layout/actoles_template.xml" value="0.67" />
-        <entry key="..\:/Vedro_lab/ChessStydyApp/chessstudyappver11/app/src/main/res/layout/recycler_lessons.xml" value="0.36666666666666664" />
-        <entry key="..\:/Vedro_lab/ChessStydyApp/chessstudyappver11/app/src/main/res/layout/recycler_lessons_topic.xml" value="0.36666666666666664" />
-        <entry key="..\:/Vedro_lab/ChessStydyApp/chessstudyappver11/app/src/main/res/layout/rlc_template.xml" value="0.36666666666666664" />
-        <entry key="..\:/Vedro_lab/ChessStydyApp/chessstudyappver11/app/src/main/res/layout/slideitem.xml" value="0.33" />
-        <entry key="..\:/Vedro_lab/ChessStydyApp/chessstudyappver11/app/src/main/res/menu/main_menu.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/Andrey/AndroidStudioProjects/chessstydyapp/app/src/main/res/layout/activity_main.xml" value="0.3140625" />
+        <entry key="..\:/Users/Andrey/AndroidStudioProjects/chessstydyapp/app/src/main/res/layout/activity_play.xml" value="0.3140625" />
+        <entry key="..\:/Users/Andrey/AndroidStudioProjects/chessstydyapp/app/src/main/res/layout/actoles_template.xml" value="0.41334569045412417" />
+        <entry key="..\:/Users/Andrey/AndroidStudioProjects/chessstydyapp/app/src/main/res/layout/slideitem.xml" value="0.5" />
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
-    <output url="file://$PROJECT_DIR$/build/classes" />
-  </component>
-  <component name="ProjectType">
-    <option name="id" value="Android" />
-  </component>
+  <component name="ExternalStorageConfigurationManager" enabled="true" />
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK" />
 </project>
