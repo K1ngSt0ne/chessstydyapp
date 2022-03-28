@@ -37,12 +37,12 @@ public class TopicLessonsActivity extends AppCompatActivity {
     }
     void setTopicLessons()
     {
-        listTopicLessons.add(new TopicLesson("Правила шахмат", "Узнайте основные шахматные правила", R.drawable.debuts));
-        listTopicLessons.add(new TopicLesson("Учимся двигать фигуры", "Узнайте о том, как ходят фигуры", R.drawable.figure));
-        listTopicLessons.add(new TopicLesson("Этапы игры", "Узнайте об этапах шахматной партии", R.drawable.debuts));
-        listTopicLessons.add(new TopicLesson("Правила шахмат: продвинутые", "Узнайте о специфичных шахматных правилах", R.drawable.debuts));
-        listTopicLessons.add(new TopicLesson("Шахматная тактика", "Узнайте основные приемы шахматной тактики", R.drawable.debuts));
-        listTopicLessons.add(new TopicLesson("Шахматная стратегия", "Узнайте основные приемы шахматной стратегии", R.drawable.debuts));
+        listTopicLessons.add(new TopicLesson("Правила шахмат", "Узнайте основные шахматные правила", R.drawable.chess_free_png_image));
+        listTopicLessons.add(new TopicLesson("Учимся двигать фигуры", "Узнайте о том, как ходят фигуры", R.drawable.chess_free_png_image));
+        listTopicLessons.add(new TopicLesson("Этапы игры", "Узнайте об этапах шахматной партии", R.drawable.chess_free_png_image));
+        listTopicLessons.add(new TopicLesson("Правила шахмат: продвинутые", "Узнайте о специфичных шахматных правилах", R.drawable.chess_free_png_image));
+        listTopicLessons.add(new TopicLesson("Шахматная тактика", "Узнайте основные приемы шахматной тактики", R.drawable.chess_free_png_image));
+        listTopicLessons.add(new TopicLesson("Шахматная стратегия", "Узнайте основные приемы шахматной стратегии", R.drawable.chess_free_png_image));
 
     }
     void goToLessonList(int position)

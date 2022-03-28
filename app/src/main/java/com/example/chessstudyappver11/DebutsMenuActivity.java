@@ -32,9 +32,9 @@ public class DebutsMenuActivity extends AppCompatActivity {
     }
     void setDebutsType()
     {
-        listDebuts.add(new TopicLesson("Открытые","Белые начинают е4, а черные отвечают е5",R.drawable.figure));
-        listDebuts.add(new TopicLesson("Закрытые","Белые начинают делают любой первый ход, кроме е4",R.drawable.figure));
-        listDebuts.add(new TopicLesson("Полуоткрытые","Белые начинают е4, а черные отвечают любой ход, кроме е5",R.drawable.figure));
+        listDebuts.add(new TopicLesson("Открытые","Белые начинают е4, а черные отвечают е5",R.drawable.chess_free_png_image));
+        listDebuts.add(new TopicLesson("Закрытые","Белые начинают делают любой первый ход, кроме е4",R.drawable.chess_free_png_image));
+        listDebuts.add(new TopicLesson("Полуоткрытые","Белые начинают е4, а черные отвечают любой ход, кроме е5",R.drawable.chess_free_png_image));
     }
     void goToChosenDebutsList(int position)
     {

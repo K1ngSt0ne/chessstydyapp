@@ -41,14 +41,14 @@ public class LessonsListActivity extends AppCompatActivity {
         switch (name)
         {
             case "chess_rules":
-                listLessons.add(new TopicLesson("О шахматах","Краткая история и цель игры", R.drawable.figure));
-                listLessons.add(new TopicLesson("О доске","Что представляет из себя шахматная доска", R.drawable.figure));
-                listLessons.add(new TopicLesson("О фигурах","О фигурах и их расположении на доске", R.drawable.figure));
-                listLessons.add(new TopicLesson("Шах, мат и пат","Рассказываем об основных событиях во время партии", R.drawable.figure));
-                listLessons.add(new TopicLesson("Рокировка","Что это такое и для чего", R.drawable.figure));
-                listLessons.add(new TopicLesson("Превращение пешки","Расскажем когда пешка может стать сильнейшей фигурой", R.drawable.figure));
+                listLessons.add(new TopicLesson("О шахматах","Краткая история и цель игры", R.drawable.chess_free_png_image));
+                listLessons.add(new TopicLesson("О доске","Что представляет из себя шахматная доска", R.drawable.chess_free_png_image));
+                listLessons.add(new TopicLesson("О фигурах","О фигурах и их расположении на доске", R.drawable.chess_free_png_image));
+                listLessons.add(new TopicLesson("Шах, мат и пат","Рассказываем об основных событиях во время партии", R.drawable.chess_free_png_image));
+                listLessons.add(new TopicLesson("Рокировка","Что это такое и для чего", R.drawable.chess_free_png_image));
+                listLessons.add(new TopicLesson("Превращение пешки","Расскажем когда пешка может стать сильнейшей фигурой", R.drawable.chess_free_png_image));
                 break;
-            case "move_figure":
+            case "move_chess_free_png_image":
                 listLessons.add(new TopicLesson("Как ходит пешка","Учимся передвигать пешку", R.drawable.white_pawn));
                 listLessons.add(new TopicLesson("Как ходит конь","Учимся передвигать коня", R.drawable.white_knight));
                 listLessons.add(new TopicLesson("Как ходит слон","Учимся передвигать слона", R.drawable.white_bishop));
@@ -57,9 +57,9 @@ public class LessonsListActivity extends AppCompatActivity {
                 listLessons.add(new TopicLesson("Как ходит король","Учимся передвигать короля", R.drawable.white_king));
                 break;
             case "game_stages":
-                listLessons.add(new TopicLesson("Немного о дебюте","Основные идеи и цель этой стадии игры", R.drawable.figure));
-                listLessons.add(new TopicLesson("Немного о миттельшпиле","В середине игры происходят основные события", R.drawable.figure));
-                listLessons.add(new TopicLesson("Немного об эндшпиле","Конец партии важен также, как и ее начало", R.drawable.figure));
+                listLessons.add(new TopicLesson("Немного о дебюте","Основные идеи и цель этой стадии игры", R.drawable.chess_free_png_image));
+                listLessons.add(new TopicLesson("Немного о миттельшпиле","В середине игры происходят основные события", R.drawable.chess_free_png_image));
+                listLessons.add(new TopicLesson("Немного об эндшпиле","Конец партии важен также, как и ее начало", R.drawable.chess_free_png_image));
                 break;
             case "chess_rules_prof":
                 break;
