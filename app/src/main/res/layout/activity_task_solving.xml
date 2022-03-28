@@ -7,7 +7,7 @@
     tools:context=".TaskSolvingActivity">
 
     <TextView
-        android:id="@+id/textDebut"
+        android:id="@+id/textTask"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Задача: "
@@ -25,5 +25,16 @@
         android:layout_marginEnd="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textDebut" />
+        app:layout_constraintTop_toBottomOf="@+id/textTask" />
+
+    <TextView
+        android:id="@+id/queueTurn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="124dp"
+        android:layout_marginTop="24dp"
+        android:text="Чей ход?"
+        android:textSize="25dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/chess_task_view" />
 </androidx.constraintlayout.widget.ConstraintLayout>

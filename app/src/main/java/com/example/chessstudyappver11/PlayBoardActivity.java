@@ -79,7 +79,7 @@ public class PlayBoardActivity extends AppCompatActivity implements ChessDelegat
                 }
 
                 FragmentManager manager = getSupportFragmentManager();
-                ResultShow myDialogFragment = new ResultShow("Партия закончена",message_text, this);
+                ResultShow myDialogFragment = new ResultShow("Партия закончена",message_text, this, "В меню", "На доску");
                 myDialogFragment.show(manager, "myDialog");
             }
             if (chessGame.isDraw())
@@ -87,7 +87,7 @@ public class PlayBoardActivity extends AppCompatActivity implements ChessDelegat
                 historyMoves.setText(historyMoves.getText()+" 1/2-1/2 ");
                 String message_text="На доске осталось недостаточно фигур!";
                 FragmentManager manager = getSupportFragmentManager();
-                ResultShow myDialogFragment = new ResultShow("Партия закончена",message_text, this);
+                ResultShow myDialogFragment = new ResultShow("Партия закончена",message_text, this, "В меню", "На доску");
                 myDialogFragment.show(manager, "myDialog");
             }
             else

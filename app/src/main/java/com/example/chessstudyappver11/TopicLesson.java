@@ -1,11 +1,11 @@
 package com.example.chessstudyappver11;
 
 import android.media.Image;
-
+//Данный класс нужен для того, чтобы затем загружать в ресайклер (прокручиваемое меню) элементы из массива
 public class TopicLesson {
-    private String topic_name;
-    private String topic_description;
-    private int topic_image_res;
+    private String topic_name; //название темы
+    private String topic_description; //описание
+    private int topic_image_res;//и изображение
 
     public TopicLesson(String topic_name, String topic_description, int topic_image_res) {
         this.topic_name = topic_name;

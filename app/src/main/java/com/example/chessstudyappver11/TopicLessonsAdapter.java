@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 public class TopicLessonsAdapter extends RecyclerView.Adapter<TopicLessonsAdapter.ViewHolder>{
-
+    //View holder хранит информацию о созданной ячейке (элементе меню)
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         public TextView topic_lesson_name;
@@ -43,16 +43,16 @@ public class TopicLessonsAdapter extends RecyclerView.Adapter<TopicLessonsAdapte
     };
 
     @NonNull
-    @Override
+    @Override //создаем новую ячейку
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
-        View stateView = inflater.inflate(R.layout.actoles_template, parent, false);
+        View stateView = inflater.inflate(R.layout.actoles_template, parent, false); //загружаем из заранее созданного шаблона
         ViewHolder viewHolder = new ViewHolder(stateView);
         return viewHolder;
     }
 
-    @Override
+    @Override //в этом методе мы привязываем данные к ячейке (элементу меню)
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         TopicLesson topicLesson = mTopicLessonList.get(position);
         TextView nameTopicLesson = holder.topic_lesson_name;
@@ -69,7 +69,7 @@ public class TopicLessonsAdapter extends RecyclerView.Adapter<TopicLessonsAdapte
         });
     }
 
-    @Override
+    @Override //возвращем количество элементов списка
     public int getItemCount() {
        return  mTopicLessonList.size();
     }

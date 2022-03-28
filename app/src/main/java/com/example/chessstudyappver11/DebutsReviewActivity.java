@@ -5,83 +5,150 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.gson.Gson;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class DebutsReviewActivity extends AppCompatActivity implements ChessDelegate {
-    ChessView mChessView;
+    ChessView mChessView; //наша доска
     private final String TAG = "ChessGame";
-    ChessGame chessGame = new ChessGame();
+    ChessGame chessGame = new ChessGame(); //игровая логика
+
+    //текст вью для текстовой информации (название дебюта и описание)
     TextView debutDescription;
     TextView debutName;
+    //ммассивы, для загрузки всей информации
+    List<DebutsDescription> listOfChosenDebuts = new ArrayList<>();
+    //индекс дебюта
+    int id_ch_deb;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_debuts_review);
+        //убираем actionBar
         ActionBar actionBar = getSupportActionBar();
         actionBar.hide();
         debutDescription = (TextView) findViewById(R.id.debutsDescription);
-        debutDescription.setText("Испанская партия — один из самых популярных дебютов, применяемых в партиях гроссмейстеров." +
-                " Изобретателем «Испанской партии» считается Руй Лопес (в зарубежной литературе данный дебют назван в его честь «дебютом Руй Лопеса»," +
-                " исп. Ruy López), однако первое упоминание об этом дебюте встречается в руководстве испанского шахматиста XV—XVI веков Луиса Рамиреса де Лусены" +
-                "\nИдея испанской партии заключается в постоянной угрозе взятия и/или связке чёрного коня с6 белым слоном, что в ряде вариантов может сделать чёрную пешку е5 уязвимой целью для белых. По оценкам разных шахматных движков," +
-                " дебют является одним из наиболее перспективных для белых и сохраняет наибольший перевес (полученный от преимущества первого хода), в примерно 0.2 пешки. ");
-        debutDescription.setMovementMethod(new ScrollingMovementMethod());
+        debutDescription.setMovementMethod(new ScrollingMovementMethod()); //добавление скролла
         debutName = (TextView) findViewById(R.id.textDebut);
-        debutName.setText("Испанская партия");
-        mChessView = findViewById(R.id.chess_debut_view);
+        Bundle arguments = getIntent().getExtras();
+        //получаем json строку из файла
+        String json_string = readDebutFile();
+        //создаем объект GSON для десериализации нашей строки
+        Gson gson = new Gson();
+        //растаскиваем в наш объект-"матрешку"
+        Debuts listOfDebuts =  gson.fromJson(json_string, Debuts.class);
+        //написать метод с инициализацией выбранного типа дебюта
+        listOfChosenDebuts=initChosenDebutType(listOfDebuts, arguments.get("chosen_type").toString());
+        debutDescription.setText(listOfChosenDebuts.get(Integer.parseInt(arguments.get("id_debuts").toString())).getDescription());
+        debutName.setText(listOfChosenDebuts.get(Integer.parseInt(arguments.get("id_debuts").toString())).getName());
+        mChessView = findViewById(R.id.chess_debut_view);//находим нашу доску и присваиваем ей возможность двигать фигуры
         mChessView.mChessDelegate=this;
-        animationMoves();
+        id_ch_deb=Integer.parseInt(arguments.get("id_debuts").toString());
+        animationMoves(id_ch_deb);//запускаем анимацию:)
     }
 
-    @Override
+    @Override //метод необходим для получение фигуры с клетки
     public ChessPiece pieceAt(Square square) {
         return chessGame.pieceAt(square);
     }
 
-    @Override
+    @Override //метод отвечает за передвижение фигур по доске
     public void movePiece(Square from, Square to) {
         chessGame.movePiece(from,to);
         mChessView = findViewById(R.id.chess_debut_view);
         mChessView.invalidate();
     }
-    void animationMoves()
+
+    List<DebutsDescription> initChosenDebutType(Debuts object, String chosenDebutsType)
     {
-        ArrayList<Moves> debut = initStartMoves();
-        Timer t = new Timer();
+        List<DebutsDescription> debutsList = new ArrayList<>();
+        switch (chosenDebutsType)
+        {
+            case "open":
+                debutsList=object.getDebuts_type().get(0).getOpen_debuts();
+                break;
+            case "closed":
+                debutsList=object.getDebuts_type().get(0).getClose_debuts();
+                break;
+            case "subopen":
+                debutsList=object.getDebuts_type().get(0).getHalf_open_debuts();
+                break;
+        }
+        return debutsList;
+    }
+
+
+
+    void animationMoves(int id_chosen_debut) //метод отвечает за анимацию передвижения фигур (все происходит по таймеру)
+    {
+        ArrayList<Moves> debut = initStartMoves(id_chosen_debut); //массив с ходами
+        Timer t = new Timer(); //объект таймера, необходимый нам для псевдоанимации
+        //создаем новую задачу
         TimerTask task = new TimerTask(){
             int i=0;
             public void run() {
                 chessGame.movePiece(debut.get(i).getSq_from(), debut.get(i).getSq_to());
-                if(i==debut.size()-1)
+                if(i==debut.size()-1) //повторяем до тех пор пока в массиве есть ходы
                     t.cancel();
                 i=i+1;
-                mChessView.invalidate();
+                mChessView.invalidate(); //обновляем нашу доску (перерисовываем)
             }
 
         };
-        t.scheduleAtFixedRate(task, 1000, 1000);
+        t.scheduleAtFixedRate(task, 1000, 1000); //запускаем нашу задачу на исполнение
 
     }
-    ArrayList<Moves> initStartMoves()
+    ArrayList<Moves> initStartMoves(int id_chosen_debut) //здесь будем исопльлзовать наш парсер из PGN в клеточки:)
     {
-        ArrayList<Moves> debutsMoves = new ArrayList<>();
-        debutsMoves.add(new Moves(new Square(4,1), new Square(4,3)));
+        ArrayList<Moves> debutsMoves; //создаем массив с ходами. В данный момент - хардкод
+        ParsePGNotationToSquare pgn = new ParsePGNotationToSquare(listOfChosenDebuts.get(id_chosen_debut).getPgn());
+        debutsMoves = pgn.loadMovesFromPGNToArray();
+        /*debutsMoves.add(new Moves(new Square(4,1), new Square(4,3)));
         debutsMoves.add(new Moves(new Square(4,6), new Square(4,4)));
         debutsMoves.add(new Moves(new Square(6,0), new Square(5,2)));
         debutsMoves.add(new Moves(new Square(1,7), new Square(2,5)));
-        debutsMoves.add(new Moves(new Square(5,0), new Square(1,4)));
+        debutsMoves.add(new Moves(new Square(5,0), new Square(1,4)));*/
         return debutsMoves;
     }
 
-    public void repeatDebuts(View v)
+
+
+    String readDebutFile()  //метод для чтение json файла
+    {
+        BufferedReader str = new BufferedReader(new InputStreamReader(getResources().openRawResource(R.raw.debuts_description)));
+        StringBuilder total = new StringBuilder();
+        try {
+            for (String line; (line = str.readLine()) != null; ) {
+                total.append(line).append('\n');
+            }
+        } catch (IOException e) {
+            Toast toast = Toast.makeText(this, "В вашем файле есть ошибочка)", Toast.LENGTH_SHORT);
+            toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+            toast.show();
+        }
+
+        Log.d("JSONread", total.toString());
+        return total.toString();
+    }
+
+    public void repeatDebuts(View v) //если пользователь захочет повторить анимацию ему нужно всего лишь нажать на одну кнопку и он получит результат:)
     {
         chessGame = new ChessGame();
-        animationMoves();
+        animationMoves(id_ch_deb);
     }
 
 }

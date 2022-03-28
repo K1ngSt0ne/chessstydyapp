@@ -3,9 +3,12 @@ package com.example.chessstudyappver11;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class ParseFENotationToSquare {
-    private String fen_string;
+//ДАнный класс необходим нам для того, что бы из полученной из json файла FEN-строки выставить на доске фигуры
 
+public class ParseFENotationToSquare {
+    private String fen_string; //наша строка с позицией
+    private Player queue_turn; //количество ходов, за которое нужно поставить мат. Здесь счет идет общий (т.е. 1 полный ход = 2 хода )
+    //далее идут словари что бы из них брать информацию о фигуре, игроке, и изображении фигуры
     private HashMap<String,Chessman> white_figure_list = new HashMap<>();
     private HashMap<String,Chessman> black_figure_list = new HashMap<>();
     private HashMap<String, Player> playerList = new HashMap<>();
@@ -21,6 +24,7 @@ public class ParseFENotationToSquare {
     }
 
     {
+        //загружаем в словари данные
         initFigureList();
         initImageList();
         initPlayer();
@@ -34,8 +38,14 @@ public class ParseFENotationToSquare {
         this.fen_string = fen_string;
     }
 
+    public Player getQueue_turn() {
+        return queue_turn;
+    }
 
-
+    public void setQueue_turn(Player queue_turn) {
+        this.queue_turn = queue_turn;
+    }
+//методы где добавляеются данные в словарь
     void initFigureList()
     {
         white_figure_list.put("K", Chessman.KING);
@@ -83,28 +93,30 @@ public class ParseFENotationToSquare {
         playerList.put("b", Player.BLACK);
         playerList.put("p", Player.BLACK);
     }
-
+    //метод, собственно на котором все завязано - в нем мы получаем массив с фигурами из FEN строки
     public ArrayList<ChessPiece> loadPositionsOnBoard()
     {
-        ArrayList<ChessPiece> chessPieces = new ArrayList<>();
-        String[] fen = fen_string.split(" ");
+        ArrayList<ChessPiece> chessPieces = new ArrayList<>();//создаем массив с фигурами
+        String[] fen = fen_string.split(" ");//сначала делим строку по пробелам
         String position = fen[0];
         String queue_move = fen[1];
-        String[] rows = position.split("/");
-       // rows_and_queue_move[rows_and_queue_move.length-1].split(" ");
-        int row = 7;
-        for (String str : rows)
+        if (queue_move.equals("w")) //устанавливаем очередность хода
+            queue_turn=Player.WHITE;
+        else
+            queue_turn=Player.BLACK;
+        String[] rows = position.split("/"); //а уже потом - по обратным слэшам, т.к. иначе все накроется
+        int row = 7; //поскольку в игровой логике счет идет не с 1 до 8, а с 0 до 7, то и число будет 7 (мы же идем сверху вниз)
+        for (String str : rows) //перебираем элемент массива строк (всего 8 элементов - 8 рядов)
         {
-            //p1pBq1p1 6 ряд
-            char[] char_row = str.toCharArray();
-            int column = 0;
-            if (row>=0)
+            char[] char_row = str.toCharArray(); //уже конкретный элемент разбиваем на символы, для того чтобы загружать фигуры в массив
+            int column = 0; //начинаем идти слева направо
+            if (row>=0) //и пока мы на доске
             {
-                for (char sym : char_row)
+                for (char sym : char_row) //поэлементно проходим строку
                 {
-                    if (Character.isDigit(sym))
+                    if (Character.isDigit(sym)) //если символ цифра, то нам нужно прибавть к колонке это число
                         column=column+Character.getNumericValue(sym);
-                    else
+                    else //а если буква, то уже загружаем фигуру в массив с фигурами
                     {
                         if (Character.isLowerCase(sym))
                             chessPieces.add(new ChessPiece(column,row, playerList.get(Character.toString(sym)), black_figure_list.get(Character.toString(sym)), image_list.get(Character.toString(sym))));
@@ -114,10 +126,8 @@ public class ParseFENotationToSquare {
                     }
                 }
             }
-            row--;
+            row--;//спускаемся на строчку ниже
         }
-
-
-        return chessPieces;
+        return chessPieces; //и получаем массив с фигурами
     }
 }
