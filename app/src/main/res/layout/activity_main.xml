@@ -1,35 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:background="#2979ff"
     tools:context=".MainActivity">
-
-
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/viewPagerImageSlider"
+    <FrameLayout
+        android:id="@+id/fragment_main"
         android:layout_width="match_parent"
-        android:layout_height="325dp"
-        android:layout_marginTop="164dp"
-        android:paddingStart="80dp"
-        android:paddingEnd="80dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="0dp"
+        android:layout_weight="1" />
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="36dp"
-        android:text="Обучающее приложение по шахматам"
-        android:textAlignment="center"
-        android:textColor="#FAF9F9"
-        android:textSize="25dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/navigation"
@@ -41,4 +26,4 @@
         app:layout_constraintTop_toTopOf="parent"
         app:menu="@menu/main_menu" />
 
-</FrameLayout>
+</LinearLayout>

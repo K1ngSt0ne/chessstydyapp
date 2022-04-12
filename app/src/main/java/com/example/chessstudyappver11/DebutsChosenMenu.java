@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 
 import java.util.ArrayList;
 
@@ -72,5 +73,12 @@ public class DebutsChosenMenu extends AppCompatActivity {
                 debutsListChosen.add(new TopicLesson("Скандинавская защита","1. e2-e4 d7-d5", R.drawable.chess_free_png_image));
                 break;
         }
+    }
+
+    public void returnToDebutTypeMenu(View v)
+    {
+        Intent intent = new Intent(DebutsChosenMenu.this, DebutsMenuActivity.class);
+        startActivity(intent);
+        finish();
     }
 }

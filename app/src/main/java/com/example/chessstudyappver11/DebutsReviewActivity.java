@@ -3,6 +3,7 @@ package com.example.chessstudyappver11;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
@@ -31,8 +32,9 @@ public class DebutsReviewActivity extends AppCompatActivity implements ChessDele
     TextView debutName;
     //ммассивы, для загрузки всей информации
     List<DebutsDescription> listOfChosenDebuts = new ArrayList<>();
-    //индекс дебюта
+    //индекс дебюта и тип
     int id_ch_deb;
+    String debut_type;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +60,7 @@ public class DebutsReviewActivity extends AppCompatActivity implements ChessDele
         mChessView = findViewById(R.id.chess_debut_view);//находим нашу доску и присваиваем ей возможность двигать фигуры
         mChessView.mChessDelegate=this;
         id_ch_deb=Integer.parseInt(arguments.get("id_debuts").toString());
+        debut_type=arguments.get("chosen_type").toString();
         animationMoves(id_ch_deb);//запускаем анимацию:)
     }
 
@@ -149,6 +152,14 @@ public class DebutsReviewActivity extends AppCompatActivity implements ChessDele
     {
         chessGame = new ChessGame();
         animationMoves(id_ch_deb);
+    }
+
+    public void returnToDebutsMenuScreen(View v)
+    {
+        Intent intent = new Intent(this, DebutsChosenMenu.class);
+        intent.putExtra("chosen_type_debuts", debut_type);
+        startActivity(intent);
+        finish();
     }
 
 }

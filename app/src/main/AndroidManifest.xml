@@ -24,9 +24,6 @@
         <activity
             android:name=".DebutsMenuActivity"
             android:exported="false" />
-        <activity
-            android:name=".LessonPractiseActivity"
-            android:exported="false" />
         <activity android:name=".LessonActivity" />
         <activity
             android:name=".LessonsListActivity"

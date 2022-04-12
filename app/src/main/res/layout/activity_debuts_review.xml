@@ -62,6 +62,7 @@
         android:layout_marginStart="28dp"
         android:layout_marginTop="16dp"
         android:text="Вернуться"
+        android:onClick="returnToDebutsMenuScreen"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/debutsDescription" />
 </androidx.constraintlayout.widget.ConstraintLayout>

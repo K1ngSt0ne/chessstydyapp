@@ -6,24 +6,13 @@
     android:layout_height="match_parent"
     tools:context=".LessonActivity">
 
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="112dp"
-        android:layout_marginTop="28dp"
-        android:text="Lesson_name"
-        android:textSize="30dp"
+
+    <WebView
+        android:id="@+id/lesson_description"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="5dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/lesson_description_material"
-        android:layout_width="368dp"
-        android:layout_height="275dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="16dp"
-        android:text="Description of lesson"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView2" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -3,17 +3,17 @@
 
     <item
         android:id="@+id/navigation_home"
-        android:icon="@drawable/computer"
-        android:title="Computer" />
+        android:icon="@drawable/baseline_list_black_24dp"
+        android:title="Menu" />
 
     <item
-        android:id="@+id/navigation_dashboard"
-        android:icon="@drawable/debuts"
-        android:title="Debuts" />
+        android:id="@+id/navigation_statistic"
+        android:icon="@drawable/baseline_signal_cellular_alt_black_24dp"
+        android:title="Statistic" />
 
     <item
-        android:id="@+id/navigation_notifications"
-        android:icon="@drawable/headpic"
-        android:title="Headpicture" />
+        android:id="@+id/navigation_exit"
+        android:icon="@drawable/baseline_cancel_black_24dp"
+        android:title="Exit" />
 
 </menu>

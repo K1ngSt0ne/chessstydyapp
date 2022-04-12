@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 
 import java.util.ArrayList;
 
@@ -52,6 +53,12 @@ public class DebutsMenuActivity extends AppCompatActivity {
                 break;
         }
         startActivity(chosen_type);
+        finish();
+    }
+    public void returnToMainActivity(View v)
+    {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
         finish();
     }
 }
