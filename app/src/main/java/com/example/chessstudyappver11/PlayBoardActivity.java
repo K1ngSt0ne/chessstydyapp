@@ -3,6 +3,7 @@ package com.example.chessstudyappver11;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
@@ -30,13 +31,15 @@ public class PlayBoardActivity extends AppCompatActivity implements ChessDelegat
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play);
         //statusBar = findViewById(R.id.textViewGameStatus);
+        SharedPreferences settings = getSharedPreferences("ChessDate", MODE_PRIVATE);
+        SharedPreferences.Editor prefEditor = settings.edit();
+        prefEditor.putString("lastActivity","playActivity");
+        prefEditor.apply();
         historyMoves = findViewById(R.id.historyMoves);
         historyMoves.setMovementMethod(new ScrollingMovementMethod());
         mChessView = findViewById(R.id.chess_view);
         mChessView.mChessDelegate=this;
-        //написать конвертер координат в нотацию (ходы)
         init_chessman_type();
-
     }
 
 

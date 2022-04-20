@@ -6,7 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
+import android.content.SharedPreferences;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
@@ -19,7 +19,6 @@ public class SliderAdapter extends RecyclerView.Adapter<SliderAdapter.SliderView
 
     private List<SliderItem> mSliderItemList;
     private ViewPager2 mViewPager2;
-
     SliderAdapter(List<SliderItem> sliderItemList, ViewPager2 viewPager2) {
         mSliderItemList = sliderItemList;
         mViewPager2 = viewPager2;
@@ -86,8 +85,8 @@ public class SliderAdapter extends RecyclerView.Adapter<SliderAdapter.SliderView
         switch (text)
         {
             case "Вперед!":
-              //  Intent intent = new Intent(itemView.getContext(), DebutsActivity.class);
-              //  itemView.getContext().startActivity(intent);
+                Intent intent_buffer = new Intent(itemView.getContext(), BufferActivity.class);
+                itemView.getContext().startActivity(intent_buffer);
                 break;
             case "К задачам":
                 Intent intent_tasks = new Intent(itemView.getContext(), TasksMenuActivity.class);
