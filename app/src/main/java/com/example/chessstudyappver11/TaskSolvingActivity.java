@@ -4,6 +4,8 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -26,8 +28,11 @@ public class TaskSolvingActivity extends AppCompatActivity implements ChessDeleg
     int needs_turns; //необходимое число ходов для того что бы поставить мат
     int turns_left=0; //счетчик для того что бы зафиксировать решена ли задача успешно/неуспешно
     int list_index=0; //счетчик для перехода к следующей задаче
+    int id_task;//тип задачи
     TextView mTextView; //тема задачи
     TextView queue_turn; //тема задачи
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,7 +51,17 @@ public class TaskSolvingActivity extends AppCompatActivity implements ChessDeleg
         //растаскиваем в наш объект-"матрешку"
         Task listOfTasks =  gson.fromJson(json_string, Task.class);
         //поулчаем id выбранной темы задачи (от 0 до 4)
-        int id_task = Integer.parseInt(arguments.get("chosen_type_task").toString());
+
+        if (arguments==null)
+        {
+            SharedPreferences settings = getSharedPreferences("ChessDate", MODE_PRIVATE);
+            id_task=settings.getInt("typeTask", 0);
+            list_index=settings.getInt("taskNumber", 0);
+        }
+        else
+        {
+            id_task = Integer.parseInt(arguments.get("chosen_type_task").toString());
+        }
         //выбрали нужный нам массив с задачами
         chosenTask=initChosenTasks(listOfTasks, id_task);
         //находим нашу виртуальную доску,
@@ -54,7 +69,12 @@ public class TaskSolvingActivity extends AppCompatActivity implements ChessDeleg
         //назначаем нашей доске делегат
         mChessView.mChessDelegate=this;
         initBoard(chosenTask);
-        //chessGame.setPiecesBox(testPiecesBox);
+        //сохраняем тему задач
+        SharedPreferences settings = getSharedPreferences("ChessDate", MODE_PRIVATE);
+        SharedPreferences.Editor prefEditor = settings.edit();
+        prefEditor.putInt("typeTask", id_task);
+        prefEditor.putString("lastActivity","taskActivity");
+        prefEditor.apply();
     }
 
     List<TaskDescription> initChosenTasks(Task object, int chosenTaskId)
@@ -168,9 +188,16 @@ public class TaskSolvingActivity extends AppCompatActivity implements ChessDeleg
         if (return_to_screen) {
             if (buttonText.equals("Вперед"))
             {
-                Log.d("Мы тут!", "Текст кнопки: " + buttonText);
                 chessGame=new ChessGame();
-                list_index++;
+                list_index++;//переходим к следующей задаче
+                //работа с shared preferences
+                SharedPreferences settings = getSharedPreferences("ChessDate", MODE_PRIVATE);
+                SharedPreferences.Editor prefEditor = settings.edit();
+                prefEditor.putInt("taskNumber",list_index);
+                prefEditor.putInt("taskSolving", settings.getInt("taskSolving", 0)+1);//всего решено задач
+                prefEditor.apply();
+                taskSolvingCountToStatistic(id_task);
+                //переходим к следующей задаче
                 turns_left=0;
                 initBoard(chosenTask);
                 mChessView.invalidate();
@@ -184,6 +211,13 @@ public class TaskSolvingActivity extends AppCompatActivity implements ChessDeleg
             }
             if (buttonText.equals("В начало"))
             {
+                SharedPreferences settings = getSharedPreferences("ChessDate", MODE_PRIVATE);
+                SharedPreferences.Editor prefEditor = settings.edit();
+                prefEditor.putInt("taskSolving", settings.getInt("taskSolving", 0)+1);//всего решено задач
+                prefEditor.putInt("taskTopicSolving", settings.getInt("taskTopicSolving", 0)+1);//сколько раз мы решили тему
+                taskTopicSolvingCountToStatistic(id_task);
+                taskSolvingCountToStatistic(id_task);
+                prefEditor.apply();
                 chessGame = new ChessGame();
                 list_index=0;
                 turns_left=0;
@@ -191,6 +225,78 @@ public class TaskSolvingActivity extends AppCompatActivity implements ChessDeleg
                 mChessView.invalidate();
             }
         }
+        else
+        {
+            SharedPreferences settings = getSharedPreferences("ChessDate", MODE_PRIVATE);
+            SharedPreferences.Editor prefEditor = settings.edit();
+            prefEditor.putInt("taskSolving", settings.getInt("taskSolving", 0)+1);//всего решено задач
+            prefEditor.putInt("taskTopicSolving", settings.getInt("taskTopicSolving", 0)+1);//сколько раз мы решили тему
+            taskTopicSolvingCountToStatistic(id_task);
+            taskSolvingCountToStatistic(id_task);
+            prefEditor.apply();
+            Intent backToTaskMenu = new Intent(TaskSolvingActivity.this, TasksMenuActivity.class);
+            startActivity(backToTaskMenu);
+            finish();
+        }
 
     }
+    //написать метод со switch case который будет подсчитывать число решенных задач по заданной теме
+    //так же еще нужно будет подсчитывать сколько пользователь прорешал полностью категорию (с аналогичным методом)
+    void taskTopicSolvingCountToStatistic(int id_task)
+    {
+        SharedPreferences settings = getSharedPreferences("ChessDate", MODE_PRIVATE);
+        SharedPreferences.Editor prefEditor = settings.edit();
+        switch (id_task)
+        {
+            case 0:
+                prefEditor.putInt("oneMoveMateSolving", settings.getInt("oneMoveMateSolving", 0)+1);//всего решено задач
+                prefEditor.apply();
+                break;
+            case 1:
+                prefEditor.putInt("twoMoveMateSolving", settings.getInt("twoMoveMateSolving", 0)+1);//всего решено задач
+                prefEditor.apply();
+                break;
+            case 2:
+                prefEditor.putInt("threeMoveMateSolving", settings.getInt("threeMoveMateSolving", 0)+1);//всего решено задач
+                prefEditor.apply();
+                break;
+            case 3:
+                prefEditor.putInt("rookAndKnightMoveSolving", settings.getInt("rookAndKnightMoveSolving", 0)+1);//всего решено задач
+                prefEditor.apply();
+                break;
+            case 4:
+                prefEditor.putInt("sacrificeMateSolving", settings.getInt("sacrificeMateSolving", 0)+1);//всего решено задач
+                prefEditor.apply();
+                break;
+        }
+    }
+    void taskSolvingCountToStatistic(int id_task)
+    {
+        SharedPreferences settings = getSharedPreferences("ChessDate", MODE_PRIVATE);
+        SharedPreferences.Editor prefEditor = settings.edit();
+        switch (id_task)
+        {
+            case 0:
+                prefEditor.putInt("oneMoveTaskSolving", settings.getInt("oneMoveTaskSolving", 0)+1);//всего решено задач
+                prefEditor.apply();
+                break;
+            case 1:
+                prefEditor.putInt("twoMateTaskSolving", settings.getInt("twoMateTaskSolving", 0)+1);//всего решено задач
+                prefEditor.apply();
+                break;
+            case 2:
+                prefEditor.putInt("threeMateTaskSolving", settings.getInt("threeMateTaskSolving", 0)+1);//всего решено задач
+                prefEditor.apply();
+                break;
+            case 3:
+                prefEditor.putInt("rookAndKnightTaskSolving", settings.getInt("rookAndKnightTaskSolving", 0)+1);//всего решено задач
+                prefEditor.apply();
+                break;
+            case 4:
+                prefEditor.putInt("sacrificeTaskSolving", settings.getInt("sacrificeTaskSolving", 0)+1);//всего решено задач
+                prefEditor.apply();
+                break;
+        }
+    }
+
 }

@@ -17,19 +17,27 @@ public class BufferActivity extends AppCompatActivity {
         actionBar.hide();
         SharedPreferences settings = getSharedPreferences("ChessDate", MODE_PRIVATE);
         String lastActivityValue=settings.getString("lastActivity", "не определено");
-        startLastActivity(lastActivityValue);
+        if (lastActivityValue.equals("не определено"))
+        {
+            Intent backToMainActivity = new Intent(BufferActivity.this, MainActivity.class);
+            backToMainActivity.putExtra("reason", "notFound");
+            startActivity(backToMainActivity);
+            finish();
+        }
+        else
+            startLastActivity(lastActivityValue);
     }
     void startLastActivity(String name)
     {
         switch (name)
         {
             case "lessonActivity":
-                Intent intent_lessons = new Intent(BufferActivity.this, TopicLessonsActivity.class);
+                Intent intent_lessons = new Intent(BufferActivity.this, LessonActivity.class);
                 startActivity(intent_lessons);
                 finish();
                 break;
             case "taskActivity":
-                Intent intent_tasks = new Intent(BufferActivity.this, TasksMenuActivity.class);
+                Intent intent_tasks = new Intent(BufferActivity.this, TaskSolvingActivity.class);
                 startActivity(intent_tasks);
                 finish();
                 break;

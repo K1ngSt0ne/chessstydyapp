@@ -1,5 +1,7 @@
 package com.example.chessstudyappver11;
 
+import static android.widget.Toast.makeText;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,6 +18,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
@@ -62,5 +65,12 @@ public class MainActivity extends AppCompatActivity {
                 .commit();
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnItemSelectedListener(mOnItemSelectedListener);
+        Bundle args = getIntent().getExtras();
+        if (args!=null)
+        {
+            Toast toast = makeText(getApplicationContext(),
+                "Вы еще не совершали действий!", Toast.LENGTH_SHORT);
+            toast.show();
+        }
     }
 }

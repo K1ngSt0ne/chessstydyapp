@@ -25,9 +25,7 @@ public class TaskSolveDialog extends DialogFragment {
         builder.setMessage(message_one); // сообщение
         builder.setPositiveButton(button1String, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                startActivity(new Intent(getContext(), TasksMenuActivity.class));
-                close_activity.finish();
-
+                return_to_screen.IsReturn(false, button1String);
             }
         });
         builder.setNegativeButton(button2String, new DialogInterface.OnClickListener() {
