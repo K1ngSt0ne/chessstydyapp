@@ -2,6 +2,7 @@ package com.example.chessstudyappver11;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +15,9 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.components.Description;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
@@ -86,7 +90,16 @@ public class StatisticFragment extends Fragment {
         dataSet.setColors(ColorTemplate.COLORFUL_COLORS);
         data = new BarData(dataSet);
         data.setBarWidth(0.6f);
+        data.setValueTextColor(Color.WHITE);
+        data.setValueTextSize(14f);
         mBarChartTask.setData(data);
+        Description description = mBarChartTask.getDescription();
+        description.setEnabled(false);
+        mBarChartTask.getXAxis().setTextColor(Color.WHITE);
+        mBarChartTask.getXAxis().setTextSize(15f);
+        mBarChartTask.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
+        mBarChartTopic.getAxisLeft().setTextColor(Color.WHITE);
+        mBarChartTopic.getAxisLeft().setTextSize(15f);
         mBarChartTask.getXAxis().setValueFormatter(new ValueFormatter() {
             @Override
             public String getFormattedValue(float value) {
@@ -117,7 +130,18 @@ public class StatisticFragment extends Fragment {
         dataSet.setColors(ColorTemplate.COLORFUL_COLORS);
         data = new BarData(dataSet);
         data.setBarWidth(0.6f);
+        data.setValueTextColor(Color.WHITE);
+        data.setValueTextSize(14f);
         mBarChartTopic.setData(data);
+        Description description = mBarChartTopic.getDescription();
+        description.setEnabled(false);
+        mBarChartTopic.getXAxis().setTextColor(Color.WHITE);
+        mBarChartTopic.getXAxis().setTextSize(15f);
+        mBarChartTopic.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
+        mBarChartTopic.getAxisLeft().setTextColor(Color.WHITE);
+        mBarChartTopic.getAxisLeft().setTextSize(15f);
+
+        //mBarChartTopic.getLegend().setEnabled(false);
         mBarChartTopic.getXAxis().setValueFormatter(new ValueFormatter() {
             @Override
             public String getFormattedValue(float value) {

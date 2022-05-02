@@ -29,6 +29,7 @@ public class TaskSolvingActivity extends AppCompatActivity implements ChessDeleg
     int turns_left=0; //счетчик для того что бы зафиксировать решена ли задача успешно/неуспешно
     int list_index=0; //счетчик для перехода к следующей задаче
     int id_task;//тип задачи
+    boolean solve_flag=false;
     TextView mTextView; //тема задачи
     TextView queue_turn; //тема задачи
 
@@ -137,6 +138,7 @@ public class TaskSolvingActivity extends AppCompatActivity implements ChessDeleg
         if ((chessGame.isEndGame())&&(turns_left==needs_turns)) //если поставлен мат
         {
             queue_turn.setText("");
+            solve_flag=true;
             //то диалоговое окно с поздравлением и предложением перейти к следующей задаче
             if (list_index<chosenTask.size()-1)
             {
@@ -227,13 +229,25 @@ public class TaskSolvingActivity extends AppCompatActivity implements ChessDeleg
         }
         else
         {
-            SharedPreferences settings = getSharedPreferences("ChessDate", MODE_PRIVATE);
-            SharedPreferences.Editor prefEditor = settings.edit();
-            prefEditor.putInt("taskSolving", settings.getInt("taskSolving", 0)+1);//всего решено задач
-            prefEditor.putInt("taskTopicSolving", settings.getInt("taskTopicSolving", 0)+1);//сколько раз мы решили тему
-            taskTopicSolvingCountToStatistic(id_task);
-            taskSolvingCountToStatistic(id_task);
-            prefEditor.apply();
+            if (list_index==chosenTask.size()-1)
+            {
+                SharedPreferences settings = getSharedPreferences("ChessDate", MODE_PRIVATE);
+                SharedPreferences.Editor prefEditor = settings.edit();
+                prefEditor.putInt("taskSolving", settings.getInt("taskSolving", 0)+1);//всего решено задач
+                prefEditor.putInt("taskTopicSolving", settings.getInt("taskTopicSolving", 0)+1);//сколько раз мы решили тему
+                taskTopicSolvingCountToStatistic(id_task);
+                taskSolvingCountToStatistic(id_task);
+                prefEditor.apply();
+            }
+            if (solve_flag)
+            {
+                SharedPreferences settings = getSharedPreferences("ChessDate", MODE_PRIVATE);
+                SharedPreferences.Editor prefEditor = settings.edit();
+                prefEditor.putInt("taskSolving", settings.getInt("taskSolving", 0)+1);//всего решено задач
+                taskSolvingCountToStatistic(id_task);
+                prefEditor.apply();
+                solve_flag=false;
+            }
             Intent backToTaskMenu = new Intent(TaskSolvingActivity.this, TasksMenuActivity.class);
             startActivity(backToTaskMenu);
             finish();

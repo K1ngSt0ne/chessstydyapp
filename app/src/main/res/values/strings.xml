@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">chessstudyappver1.1</string>
+    <string name="description_shortnames">Расшифровка сокращений: \n1. OMM - мат в 1 ход\n2. TMM - мат в 2 хода\n3. ThMM - мат в 3 хода\n4. RandNM - мат конем и ладьей\n5. SMate - мат с жертвой фигуры</string>
 </resources>
