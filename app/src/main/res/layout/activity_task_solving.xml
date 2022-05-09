@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:background="#eceff1"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".TaskSolvingActivity">
@@ -10,7 +13,9 @@
         android:id="@+id/textTask"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
         android:text="Задача: "
+        android:textColor="#000000"
         android:textAlignment="center"
         android:textSize="25dp"
         app:layout_constraintStart_toStartOf="parent"
@@ -29,12 +34,12 @@
 
     <TextView
         android:id="@+id/queueTurn"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="124dp"
-        android:layout_marginTop="24dp"
+        android:gravity="center_horizontal"
         android:text="Чей ход?"
         android:textSize="25dp"
+        android:textColor="#000000"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/chess_task_view" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

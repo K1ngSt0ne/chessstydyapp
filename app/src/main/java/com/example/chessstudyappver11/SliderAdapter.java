@@ -106,6 +106,4 @@ public class SliderAdapter extends RecyclerView.Adapter<SliderAdapter.SliderView
                 break;
         }
     }
-
-
 }

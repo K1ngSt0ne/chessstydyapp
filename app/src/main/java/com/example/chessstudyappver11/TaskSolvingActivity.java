@@ -18,20 +18,27 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
-public class TaskSolvingActivity extends AppCompatActivity implements ChessDelegate, CheckReturnToScreen{
+public class TaskSolvingActivity extends AppCompatActivity implements ChessDelegate, CheckReturnToScreen, GettingDataFromDialog{
     ChessView mChessView; //доска
     ChessGame chessGame = new ChessGame(); //игровая логика
     ArrayList<ChessPiece> fenPiecesBox = new ArrayList<>(); //массив с фигурами
     List<TaskDescription> chosenTask = new ArrayList<>(); //массив с задачами
+    private final String TAG = "TaskSolvingActivity";
     int needs_turns; //необходимое число ходов для того что бы поставить мат
     int turns_left=0; //счетчик для того что бы зафиксировать решена ли задача успешно/неуспешно
     int list_index=0; //счетчик для перехода к следующей задаче
     int id_task;//тип задачи
     boolean solve_flag=false;
+    boolean dialogTransformFlag = false;
     TextView mTextView; //тема задачи
     TextView queue_turn; //тема задачи
+    private HashMap<String, Chessman> chessman_type= new HashMap<>();
+    private HashMap<String, Integer> white_resID = new HashMap<>();
+    private HashMap<String, Integer> black_resID = new HashMap<>();
+    Square destination_square;
 
 
     @Override
@@ -76,6 +83,7 @@ public class TaskSolvingActivity extends AppCompatActivity implements ChessDeleg
         prefEditor.putInt("typeTask", id_task);
         prefEditor.putString("lastActivity","taskActivity");
         prefEditor.apply();
+        init_chessman_type();
     }
 
     List<TaskDescription> initChosenTasks(Task object, int chosenTaskId)
@@ -129,31 +137,30 @@ public class TaskSolvingActivity extends AppCompatActivity implements ChessDeleg
 
     @Override
     public void movePiece(Square from, Square to) {
+        destination_square=new Square(to.getColumn(),to.getRow());
         chessGame.movePiece(from,to); //двигаем фигуры
         if (chessGame.getTurnPlayer()==Player.WHITE)
             queue_turn.setText("Ход белых");
         else
             queue_turn.setText("Ход черных");
-        turns_left++; //прибавляем счетчик
-        if ((chessGame.isEndGame())&&(turns_left==needs_turns)) //если поставлен мат
+
+        if (chessGame.isMoving())
         {
-            queue_turn.setText("");
-            solve_flag=true;
-            //то диалоговое окно с поздравлением и предложением перейти к следующей задаче
-            if (list_index<chosenTask.size()-1)
+            if (chessGame.isTransforming())
             {
                 FragmentManager manager = getSupportFragmentManager();
-                TaskSolveDialog myDialogFragment = new TaskSolveDialog("Задача решена","Хотите перейти к следующей задаче?", this, "В меню", "Вперед", this);
-                myDialogFragment.show(manager, "myDialog");
-            }
-            else if (list_index==chosenTask.size()-1) //если пользователь решил все задачи
-            {
-                FragmentManager manager = getSupportFragmentManager();
-                TaskSolveDialog myDialogFragment = new TaskSolveDialog("Вы решили все задачи!","Так держать! Хотите прорешать еще раз?", this, "В меню", "В начало", this);
-                myDialogFragment.show(manager, "myDialog");
+                FigureTransformDialog dialogTransform = new FigureTransformDialog(this);
+                dialogTransform.show(manager, "transform");
             }
 
+            turns_left++; //прибавляем счетчик
         }
+
+        if ((chessGame.isEndGame())&&(turns_left==needs_turns)) //если поставлен мат
+        {
+            dialogCallMethod();
+        }
+
         else if (turns_left>needs_turns) //иначе пишем что задача не решена и предлагаем повторить попытку
         {
             FragmentManager manager = getSupportFragmentManager();
@@ -165,6 +172,7 @@ public class TaskSolvingActivity extends AppCompatActivity implements ChessDeleg
             mChessView = findViewById(R.id.chess_task_view);
             mChessView.invalidate();
         }
+
 
     }
     String readTaskFile()  //метод для чтение json файла
@@ -313,4 +321,72 @@ public class TaskSolvingActivity extends AppCompatActivity implements ChessDeleg
         }
     }
 
+
+    @Override
+    public void getData(String text) {
+        Log.d(TAG, "ВЫбрал фигуру: " + text);
+
+        ArrayList<ChessPiece> newPieceBox = chessGame.getPiecesBox();
+        ChessPiece newFigure = pieceAt(destination_square);
+        newPieceBox.remove(newFigure);
+        Chessman newChessman=chessman_type.get(text);
+        ChessPiece newChosenPiece = null;
+        if (chessGame.getTurnPlayer()==Player.WHITE)
+        {
+            Integer resID = black_resID.get(text);
+            newChosenPiece = new ChessPiece(newFigure.getColumn(), newFigure.getRow()-1, Player.BLACK,newChessman, resID);
+        }
+        else if (chessGame.getTurnPlayer()==Player.BLACK)
+        {
+            Integer resID = white_resID.get(text);
+            newChosenPiece = new ChessPiece(newFigure.getColumn(), newFigure.getRow()+1,Player.WHITE, newChessman, resID);
+        }
+        newPieceBox.add(newChosenPiece);
+        chessGame.setPiecesBox(newPieceBox);
+        chessGame.setTransforming(false);
+        mChessView.invalidate();
+        if (chessGame.getTurnPlayer()==Player.WHITE)
+            chessGame.setTurnPlayer(Player.BLACK);
+        else
+            chessGame.setTurnPlayer(Player.WHITE);
+        //починить костыль а то фигура исчезает
+        chessGame.movePiece(new Square(newChosenPiece.getColumn(), newChosenPiece.getRow()),destination_square);
+        if ((chessGame.isEndGame())&&(turns_left==needs_turns))
+            dialogCallMethod();
+    }
+    void dialogCallMethod()
+    {
+        queue_turn.setText("");
+        solve_flag=true;
+        //то диалоговое окно с поздравлением и предложением перейти к следующей задаче
+        if (list_index<chosenTask.size()-1)
+        {
+            FragmentManager manager = getSupportFragmentManager();
+            TaskSolveDialog myDialogFragment = new TaskSolveDialog("Задача решена","Хотите перейти к следующей задаче?", this, "В меню", "Вперед", this);
+            myDialogFragment.show(manager, "myDialog");
+        }
+        else if (list_index==chosenTask.size()-1) //если пользователь решил все задачи
+        {
+            FragmentManager manager = getSupportFragmentManager();
+            TaskSolveDialog myDialogFragment = new TaskSolveDialog("Вы решили все задачи!","Так держать! Хотите прорешать еще раз?", this, "В меню", "В начало", this);
+            myDialogFragment.show(manager, "myDialog");
+        }
+    }
+
+    void init_chessman_type()
+    {
+        chessman_type.put("Ферзь", Chessman.QUEEN);
+        chessman_type.put("Ладья", Chessman.ROOK);
+        chessman_type.put("Слон", Chessman.BISHOP);
+        chessman_type.put("Конь", Chessman.KNIGHT);
+        black_resID.put("Слон", R.drawable.black_bishop);
+        black_resID.put("Конь", R.drawable.black_knight);
+        black_resID.put("Ладья",R.drawable.black_rook);
+        black_resID.put("Ферзь", R.drawable.black_queen);
+        white_resID.put("Слон", R.drawable.white_bishop);
+        white_resID.put("Конь", R.drawable.white_knight);
+        white_resID.put("Ладья",R.drawable.white_rook);
+        white_resID.put("Ферзь", R.drawable.white_queen);
+
+    }
 }

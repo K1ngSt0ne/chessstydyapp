@@ -58,6 +58,4 @@ public class ResultShow extends DialogFragment  {
         this.button_one_str = button_one_str;
         this.button_two_str = button_two_str;
     }
-
-
 }

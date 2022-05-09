@@ -44,7 +44,7 @@ public class DebutsReviewActivity extends AppCompatActivity implements ChessDele
         ActionBar actionBar = getSupportActionBar();
         actionBar.hide();
         debutDescription = (TextView) findViewById(R.id.debutsDescription);
-        debutDescription.setMovementMethod(new ScrollingMovementMethod()); //добавление скролла
+      //  debutDescription.setMovementMethod(new ScrollingMovementMethod()); //добавление скролла
         debutName = (TextView) findViewById(R.id.textDebut);
         Bundle arguments = getIntent().getExtras();
         //получаем json строку из файла
@@ -161,5 +161,4 @@ public class DebutsReviewActivity extends AppCompatActivity implements ChessDele
         startActivity(intent);
         finish();
     }
-
 }

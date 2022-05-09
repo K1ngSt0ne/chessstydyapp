@@ -1,5 +1,6 @@
 package com.example.chessstudyappver11;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 
@@ -11,7 +12,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-
+/**!!!1 АЛЕРТ !! НЕ ЗАБУДЬ СДЕЛАТЬ ПРОВЕРКУ НА ШАХ ИЛИ МАТ ПОСЛЕ ПРЕВРАЩЕНИЯ ФИГУРЫ!!!*/
 public class PlayBoardActivity extends AppCompatActivity implements ChessDelegate, GettingDataFromDialog{
 
     ChessView mChessView;
@@ -30,7 +31,8 @@ public class PlayBoardActivity extends AppCompatActivity implements ChessDelegat
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play);
-        //statusBar = findViewById(R.id.textViewGameStatus);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.hide();
         SharedPreferences settings = getSharedPreferences("ChessDate", MODE_PRIVATE);
         SharedPreferences.Editor prefEditor = settings.edit();
         prefEditor.putString("lastActivity","playActivity");
@@ -88,7 +90,15 @@ public class PlayBoardActivity extends AppCompatActivity implements ChessDelegat
             if (chessGame.isDraw())
             {
                 historyMoves.setText(historyMoves.getText()+" 1/2-1/2 ");
-                String message_text="На доске осталось недостаточно фигур!";
+                String message_text="";
+                if (chessGame.isFifteenthResult())
+                    message_text="Правило 50 ходов";
+                if (chessGame.isDisadvantageResult())
+                    message_text="На доске осталось недостаточно фигур!";
+                if (chessGame.isStalemateResult())
+                    message_text="На доске пат!";
+                if (chessGame.isThreefoldMovesResult())
+                    message_text="Троекратное повторение ходов!";
                 FragmentManager manager = getSupportFragmentManager();
                 ResultShow myDialogFragment = new ResultShow("Партия закончена",message_text, this, "В меню", "На доску");
                 myDialogFragment.show(manager, "myDialog");

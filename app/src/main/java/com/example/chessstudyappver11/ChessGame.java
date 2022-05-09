@@ -2,9 +2,6 @@ package com.example.chessstudyappver11;
 
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-import androidx.fragment.app.FragmentManager;
-
 import java.util.ArrayList;
 
 import static java.lang.Math.abs;
@@ -37,6 +34,10 @@ public class ChessGame {
     private boolean isMoving= false;
     private boolean isTransforming = false;
     private boolean canMovingWhileCheck = false;
+    private boolean stalemateResult = false;
+    private boolean threefoldMovesResult = false;
+    private boolean disadvantageResult = false;
+    private boolean fifteenthResult = false;
     private int movesWithoutTakingFigure = 0;
     private ArrayList<ChessPiece> piecesBox = new ArrayList<>();
     private ArrayList<ChessPiece> nextTurnPiecesBox = new ArrayList<>();
@@ -240,7 +241,7 @@ public class ChessGame {
                 }
                 else
                 {
-                    if (enemyPiece==null)
+                    if ((enemyPiece==null)||(enemyPiece.getPlayer()==piecePlayer.getPlayer()))
                         return false;
                     else
                         {
@@ -272,7 +273,7 @@ public class ChessGame {
                 }
                 else
                 {
-                    if (enemyPiece==null)
+                    if ((enemyPiece==null)||(enemyPiece.getPlayer()==piecePlayer.getPlayer()))
                         return false;
                     else
                     {
@@ -497,20 +498,34 @@ public class ChessGame {
             return true;
         if (pieceBoxSize()==3)
         {
+            //пофиксить тут
             for (ChessPiece piece : piecesBox)
             {
                 if ((piece.getChessman()==Chessman.BISHOP)||(piece.getChessman()==Chessman.KNIGHT))
+                {
+                    disadvantageResult=true;
                     return true;
+                }
+
             }
         }
         if (movesWithoutTakingFigure==100) // нужно проврить что пешки не ходили и фигуры не брались
+        {
+            fifteenthResult =true;
             return true;
+        }
+
         if (checkStalemate())
+        {
+            stalemateResult=true;
             return true;
+        }
+
         if (checkThreefoldMoves())
+        {
+            threefoldMovesResult=true;
             return true;
-
-
+        }
         return false;
     }
     private boolean checkStalemate() //проверка на пат
@@ -567,12 +582,90 @@ public class ChessGame {
             Log.d(TAG, "Занятые клетки союзными фигурами " + ally_figure);
             if (moves+ally_figure==possibleMoves.size())
             {
-                Log.d(TAG,"ПААААТ!!");
-                return true;
+                if (!canFigureMove())
+                {
+                    Log.d(TAG,"ПААААТ!!");
+                    return true;
+                }
+                //нужен метод который будет проверять, возможно ли совершить тот или иной ход
+
             }
         }
+        return false;
+    }
 
+    private boolean canFigureMove()
+    {
+        Player currentPlayer=Player.WHITE;
+        if (turnPlayer==Player.BLACK)
+            currentPlayer=Player.WHITE;
+        else
+            currentPlayer=Player.BLACK;
+        ArrayList<ChessPiece> mirrorPiecesBox =new ArrayList<ChessPiece>(piecesBox);
+        for (ChessPiece piece : mirrorPiecesBox)
+        {
+            if (piece.getPlayer()==currentPlayer)
+            {
+                switch (piece.getChessman())
+                {
+                    case PAWN:
+                        Square depart = new Square(piece.getColumn(), piece.getRow());
+                        ArrayList<Square> pawn_moves = new ArrayList<>();
 
+                        if (piece.getPlayer()==Player.BLACK)
+                        {
+                            pawn_moves.add(new Square(piece.getColumn(), piece.getRow()-1));
+                            pawn_moves.add(new Square(piece.getColumn()-1, piece.getRow()-1));
+                            pawn_moves.add(new Square(piece.getColumn()+1, piece.getRow()-1));
+                            for (Square sq : pawn_moves)
+                            {
+                                if (canPawnMove(depart,sq))
+                                {
+                                    ArrayList<ChessPiece> test =new ArrayList<ChessPiece>(piecesBox);
+                                    ChessPiece remove_piece = pieceAt(depart);
+                                    piecesBox.remove(remove_piece);
+                                    remove_piece.setRow(sq.getRow());
+                                    remove_piece.setColumn(sq.getColumn());
+                                    piecesBox.add(remove_piece);
+                                    if(!checkAllFigure(turnPlayer, findEnemyKing(turnPlayer), piecesBox)) //делаем копию массива с фигурами и его прверяем
+                                    {
+                                        ChessPiece chessPiece = pieceAt(sq);
+                                        piecesBox.remove(chessPiece);
+                                        chessPiece.setColumn(depart.getColumn());
+                                        chessPiece.setRow(depart.getRow());
+                                        piecesBox.add(chessPiece);
+                                        return true;
+                                    }
+                                   piecesBox=new ArrayList<>(test);
+                                }
+                            }
+
+                        }
+                        else
+                        {
+                            pawn_moves.add(new Square(piece.getColumn(), piece.getRow()-1));
+                            pawn_moves.add(new Square(piece.getColumn()-1, piece.getRow()-1));
+                            pawn_moves.add(new Square(piece.getColumn()+1, piece.getRow()-1));
+                            for (Square sq : pawn_moves)
+                            {
+                                if ((canPawnMove(depart, new Square(piece.getColumn(), piece.getRow()+1)))||((canPawnMove(depart, new Square(piece.getColumn()-1, piece.getRow()+1)))||((canPawnMove(depart, new Square(piece.getColumn()+1, piece.getRow()+1))))))
+                                    if(!secondBoard(piecesBox))
+                                        return true;
+                            }
+                        }
+
+                        break;
+                    case BISHOP:
+                        break;
+                    case QUEEN:
+                        break;
+                    case ROOK:
+                        break;
+                    case KNIGHT:
+                        break;
+                }
+            }
+        }
         return false;
     }
 
@@ -670,7 +763,7 @@ public class ChessGame {
             for (Pair pair : possibleMoves) {
                 //сюда нам надо!
                 ChessPiece pieceFree = pieceAt(pair.getColumn(), pair.getRow());
-                if (pieceFree == null) //если пустая клетка проерит что она под боем
+                if (pieceFree == null) //если пустая клетка проверить что она под боем
                 {
                     nextTurnPiecesBox=new ArrayList<ChessPiece>(piecesBox);
                     ChessPiece newKing = new ChessPiece(kingPiece.getColumn(), kingPiece.getRow(), kingPiece.getPlayer(), kingPiece.getChessman(), kingPiece.getResID());
@@ -678,15 +771,32 @@ public class ChessGame {
                     newKing.setColumn(pair.getColumn());
                     newKing.setRow(pair.getRow());
                     piecesBox.add(newKing);
+                    boolean moves_flag=false;
                     for (ChessPiece piece : piecesBox) {
                         if ((newKing.getPlayer() == WHITE_PLAYER) && (piece.getPlayer() == BLACK_PLAYER)) {
                             if (checkIsCheck(piece, newKing.getColumn(), newKing.getRow()))
-                                moves++;
+                            {
+                                if (!moves_flag)
+                                {
+                                    moves++;
+                                    moves_flag=true;
+                                }
+
+                                //break; //если оставить break то что то будет работатть а что то нет - беда с проверкой когда бьется несоклько раз одна клетка
+                            }
+
                         } else if ((newKing.getPlayer() == BLACK_PLAYER) & (piece.getPlayer() == WHITE_PLAYER)) {
                             if (checkIsCheck(piece, newKing.getColumn(), newKing.getRow()))
-                                moves++;
+                            {
+                                if (!moves_flag)
+                                {
+                                    moves++;
+                                    moves_flag=true;
+                                }
+                            }
 
                         }
+
                     }
                     piecesBox=new ArrayList<>(nextTurnPiecesBox);
                 }
@@ -1095,6 +1205,36 @@ public class ChessGame {
         isDraw = draw;
     }
 
+    public boolean isStalemateResult() {
+        return stalemateResult;
+    }
 
+    public void setStalemateResult(boolean stalemateResult) {
+        this.stalemateResult = stalemateResult;
+    }
+
+    public boolean isThreefoldMovesResult() {
+        return threefoldMovesResult;
+    }
+
+    public void setThreefoldMovesResult(boolean threefoldMovesResult) {
+        this.threefoldMovesResult = threefoldMovesResult;
+    }
+
+    public boolean isDisadvantageResult() {
+        return disadvantageResult;
+    }
+
+    public void setDisadvantageResult(boolean disadvantageResult) {
+        this.disadvantageResult = disadvantageResult;
+    }
+
+    public boolean isFifteenthResult() {
+        return fifteenthResult;
+    }
+
+    public void setFifteenthResult(boolean fifteenthResult) {
+        this.fifteenthResult = fifteenthResult;
+    }
 }
 

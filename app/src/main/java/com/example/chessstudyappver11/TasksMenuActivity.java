@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 
 import java.util.ArrayList;
 
@@ -61,6 +62,12 @@ public class TasksMenuActivity extends AppCompatActivity {
                 break;
         }
         startActivity(chosen_type);
+        finish();
+    }
+    public void goToMenuScreen(View v)
+    {
+        Intent intent = new Intent(TasksMenuActivity.this, MainActivity.class);
+        startActivity(intent);
         finish();
     }
 }

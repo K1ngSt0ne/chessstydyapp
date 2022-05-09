@@ -1,21 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:background="#eceff1"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".DebutsReviewActivity">
-
-    <Button
-        android:id="@+id/repeatButton"
-        android:layout_width="150dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="28dp"
-        android:onClick="repeatDebuts"
-        android:text="Повторить анимацию"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/debutsDescription" />
 
     <TextView
         android:id="@+id/textDebut"
@@ -23,46 +15,85 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="Название дебюта"
+        android:textColor="#000000"
         android:textAlignment="center"
         android:textSize="25dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.example.chessstudyappver11.ChessView
-        android:id="@+id/chess_debut_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="15dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textDebut" />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="569dp"
+        android:layout_margin="10dp">
 
-    <TextView
-        android:id="@+id/debutsDescription"
-        android:layout_width="352dp"
-        android:layout_height="159dp"
-        android:layout_marginStart="15dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginEnd="15dp"
-        android:scrollbarSize="10dp"
-        android:scrollbars="vertical"
-        android:scrollHorizontally="false"
-        android:text="Описание дебюта"
-        android:textSize="18dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/chess_debut_view" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-    <Button
-        android:id="@+id/returnButton"
-        android:layout_width="150dp"
-        android:layout_height="60dp"
-        android:layout_marginStart="28dp"
-        android:layout_marginTop="16dp"
-        android:text="Вернуться"
-        android:onClick="returnToDebutsMenuScreen"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/debutsDescription" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <com.example.chessstudyappver11.ChessView
+                android:id="@+id/chess_debut_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="15dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textDebut" />
+
+            <TextView
+                android:id="@+id/debutsDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="15dp"
+                android:gravity="center_horizontal|fill_horizontal"
+                android:text="Описание дебюта"
+                android:textAlignment="gravity"
+                android:textColor="#000000"
+                android:textSize="18dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/chess_debut_view" />
+        </LinearLayout>
+    </ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/returnButton"
+            android:layout_width="180dp"
+            android:layout_height="70dp"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:onClick="returnToDebutsMenuScreen"
+            android:text="Вернуться"
+            android:textAllCaps="false"
+            android:backgroundTint="#2977ff"
+            android:textSize="18dp"
+            app:cornerRadius="15dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/repeatButton"
+            android:layout_width="180dp"
+            android:layout_height="70dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:backgroundTint="#2977ff"
+            android:onClick="repeatDebuts"
+            android:text="Повторить анимацию"
+            android:textAllCaps="false"
+            android:textSize="18dp"
+            app:cornerRadius="15dp" />
+
+    </LinearLayout>
+
+</LinearLayout>

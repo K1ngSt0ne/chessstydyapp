@@ -195,5 +195,4 @@ public class ChessView extends View {
             mPaint.setColor(lightColor);
         canvas.drawRect(originX + col * cellSide, originY + row * cellSide, originX + (col + 1)* cellSide, originY + (row + 1) * cellSide, mPaint);
     }
-
 }
