@@ -28,7 +28,7 @@ public class LessonsListActivity extends AppCompatActivity {
         TopicLessonsAdapter.OnTopicLessonClickListener lClickListener = new TopicLessonsAdapter.OnTopicLessonClickListener() {
             @Override
             public void onTopicLessonClick(TopicLesson topicLesson, int position) {
-                goToLessonActivity(position);
+                goToLessonActivity(position, arguments.get("topic_chosen").toString());
             }
         };
         TopicLessonsAdapter adapter = new TopicLessonsAdapter(listLessons, lClickListener);
@@ -94,12 +94,13 @@ public class LessonsListActivity extends AppCompatActivity {
         startActivity(intent);
         finish();
     }
-    void goToLessonActivity(int position)
+    void goToLessonActivity(int position, String topicName)
     {
         String chosenLesson = listLessons.get(position).getTopic_name();
         String html_name = lessonsDict.get(chosenLesson);
         Intent intent = new Intent(LessonsListActivity.this, LessonActivity.class);
         intent.putExtra("html_page", html_name);
+        intent.putExtra("topicName", topicName);
         startActivity(intent);
         finish();
     }

@@ -10,17 +10,20 @@ public class ParseSquareToNotationMoves {
     private int start_size;
     private int end_size;
     private Chessman piece_type;
+    private Player piecePlayer;
 
     private HashMap<Integer,Integer> rows_number = new HashMap<>();
     private HashMap<Integer, String> column_literal = new HashMap<>();
-    private HashMap<Chessman, String> figure_literal = new HashMap<>();
+    private HashMap<Chessman, String> white_figure_literal = new HashMap<>();
+    private HashMap<Chessman, String> black_figure_literal = new HashMap<>();
 
-    public ParseSquareToNotationMoves(int column, int row, int start_size, int end_size, Chessman piece_type) {
+    public ParseSquareToNotationMoves(int column, int row, int start_size, int end_size, Chessman piece_type, Player piecePlayer) {
         this.column = column;
         this.row = row;
         this.start_size = start_size;
         this.end_size = end_size;
         this.piece_type = piece_type;
+        this.piecePlayer = piecePlayer;
     }
 
     {
@@ -53,12 +56,18 @@ public class ParseSquareToNotationMoves {
     }
     private void init_figure_icon()
     {
-        figure_literal.put(Chessman.KING, "\u2654");
-        figure_literal.put(Chessman.QUEEN, "\u2655");
-        figure_literal.put(Chessman.ROOK, "\u2656");
-        figure_literal.put(Chessman.BISHOP, "\u2657");
-        figure_literal.put(Chessman.KNIGHT, "\u2658");
-        figure_literal.put(Chessman.PAWN, "\u2659");
+        white_figure_literal.put(Chessman.KING, "\u2654");
+        white_figure_literal.put(Chessman.QUEEN, "\u2655");
+        white_figure_literal.put(Chessman.ROOK, "\u2656");
+        white_figure_literal.put(Chessman.BISHOP, "\u2657");
+        white_figure_literal.put(Chessman.KNIGHT, "\u2658");
+        white_figure_literal.put(Chessman.PAWN, "\u2659");
+        black_figure_literal.put(Chessman.KING, "\265A");
+        black_figure_literal.put(Chessman.QUEEN, "\u265B");
+        black_figure_literal.put(Chessman.ROOK, "\u265C");
+        black_figure_literal.put(Chessman.BISHOP, "\u265D");
+        black_figure_literal.put(Chessman.KNIGHT, "\u265E");
+        black_figure_literal.put(Chessman.PAWN, "\u265F");
     }
 
 
@@ -66,8 +75,10 @@ public class ParseSquareToNotationMoves {
     {
         //добавить словарь с фигурами
         String notation_string="";
-        notation_string+=figure_literal.get(move.getPiece_type());
-
+        if (move.piecePlayer==Player.WHITE)
+            notation_string+=white_figure_literal.get(move.getPiece_type());
+        else
+            notation_string+=black_figure_literal.get(move.getPiece_type());
         for (int i=0;i<column_literal.size();i++)
         {
             if (i==move.getColumn())

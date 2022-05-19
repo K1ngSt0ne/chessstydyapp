@@ -53,7 +53,7 @@ public class PlayBoardActivity extends AppCompatActivity implements ChessDelegat
     @Override
     public void movePiece(Square from, Square to) {
             int start_size = chessGame.pieceBoxSize();
-            Chessman piece_type = pieceAt(from).getChessman();
+            ChessPiece piece_type = pieceAt(from);
             destination_square=new Square(to.getColumn(),to.getRow());
             chessGame.movePiece(from,to);
             int end_size = chessGame.pieceBoxSize();
@@ -110,9 +110,9 @@ public class PlayBoardActivity extends AppCompatActivity implements ChessDelegat
             }
     }
 
-    public void historyMovesShow(Square destination, int start_size, int end_size, Chessman piece)
+    public void historyMovesShow(Square destination, int start_size, int end_size, ChessPiece piece)
     {
-        ParseSquareToNotationMoves move = new ParseSquareToNotationMoves(destination.getColumn(),destination.getRow(), start_size,end_size, piece);
+        ParseSquareToNotationMoves move = new ParseSquareToNotationMoves(destination.getColumn(),destination.getRow(), start_size,end_size, piece.getChessman(), piece.getPlayer());
         String move_to_HM=move.convertSquareToNotation(move);
         String all_moves="";
         //т.к. мы сходили, у нас поменялась очередность хода, поэтому в данный момент ход черных, отсюда и проверка
@@ -125,18 +125,18 @@ public class PlayBoardActivity extends AppCompatActivity implements ChessDelegat
                 all_moves=historyMoves.getText()+ " "+ turns+move_to_HM+"+";
             else if ((chessGame.isShortCastling())&&(chessGame.isWhiteIsCastling()))
             {
-                all_moves=historyMoves.getText()+ ""+ turns+" O-O ";
+                all_moves=historyMoves.getText()+ "     "+ turns+" O-O ";
                 chessGame.setShortCastling(false);
 
             }
             else if ((chessGame.isLongCastling())&&(chessGame.isWhiteIsCastling()))
             {
-                all_moves=historyMoves.getText() +  "" + turns +" O-O-O ";
+                all_moves=historyMoves.getText() +  "" + turns +" O-O-O     ";
                 chessGame.setLongCastling(false);
 
             }
             else
-                all_moves=historyMoves.getText()+ " "+ turns+move_to_HM + " ";
+                all_moves=historyMoves.getText()+ "     "+ turns+move_to_HM + "     ";
         }
         //(а это для черных)
 
@@ -148,19 +148,19 @@ public class PlayBoardActivity extends AppCompatActivity implements ChessDelegat
                 all_moves=historyMoves.getText()+ " "+move_to_HM + "+";
             else if ((chessGame.isShortCastling())&&(chessGame.isBlackIsCastling()))
             {
-                all_moves=historyMoves.getText()+ " O-O ";
+                all_moves=historyMoves.getText()+ " O-O \n";
                 chessGame.setShortCastling(false);
                 //chessGame.setCastling(false);
             }
             else if ((chessGame.isLongCastling())&&(chessGame.isBlackIsCastling()))
             {
-                all_moves=historyMoves.getText()+ " O-O-O ";
+                all_moves=historyMoves.getText()+ " O-O-O \n";
                 chessGame.setLongCastling(false);
                // chessGame.setCastling(false);
             }
 
             else
-                all_moves=historyMoves.getText()+ " "+move_to_HM + " ";
+                all_moves=historyMoves.getText()+ "     "+move_to_HM + "    \n";
             turns++;
 
         }

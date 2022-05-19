@@ -1,5 +1,10 @@
 package com.example.chessstudyappver11;
-
+/**
+ * Что подправить:
+ * 1. в задачах неверно запоминает номер последней задачи (перебрасывает на следующую, если она была первой)
+ * 2. не работает возврат к последнему уроку (через shared preferences)
+ * 3. ничьи (троекратное повторение ходов)
+ * */
 import static android.widget.Toast.makeText;
 
 import androidx.annotation.NonNull;

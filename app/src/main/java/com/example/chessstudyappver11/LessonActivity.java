@@ -3,12 +3,15 @@ package com.example.chessstudyappver11;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.View;
 import android.webkit.WebView;
 
 public class LessonActivity extends AppCompatActivity {
     WebView lesson;
+    String topicName;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -21,10 +24,12 @@ public class LessonActivity extends AppCompatActivity {
         {
             SharedPreferences settings = getSharedPreferences("ChessDate", MODE_PRIVATE);
             name=settings.getString("lastLesson", "не определено");
+            topicName = settings.getString("topicNameValue", "не определено");
         }
         else
         {
             name = arguments.get("html_page").toString();
+            topicName = arguments.get("topicName").toString();
         }
 
         String address = "file:///android_res/raw/" + name;
@@ -36,6 +41,15 @@ public class LessonActivity extends AppCompatActivity {
         SharedPreferences.Editor prefEditor = settings.edit();
         prefEditor.putString("lastLesson",name);
         prefEditor.putString("lastActivity","lessonActivity");
+        prefEditor.putString("topicNameValue", arguments.get("topicName").toString());
         prefEditor.apply();
+    }
+
+    public void backToTopicChosenMenu(View v)
+    {
+        Intent intent = new Intent(LessonActivity.this, LessonsListActivity.class);
+        intent.putExtra("topic_chosen", topicName);
+        startActivity(intent);
+        finish();
     }
 }

@@ -20,11 +20,13 @@
 
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/debuts_type_recycler"
         android:layout_width="match_parent"
-        android:layout_height="600dp"
+        android:layout_height="match_parent"
         android:layout_margin="10dp"
+        android:layout_weight="1"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -40,7 +42,7 @@
         android:layout_marginBottom="10dp"
         android:backgroundTint="#2977ff"
         android:gravity="center_horizontal"
-        android:onClick="goToMenuScreen"
+        android:onClick="returnToMainActivity"
         android:text="Вернуться"
         android:textAllCaps="false"
         android:textSize="18dp"
