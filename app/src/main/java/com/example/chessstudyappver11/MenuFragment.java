@@ -35,7 +35,7 @@ public class MenuFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_menu, container, false);
         mViewPager2 = (ViewPager2) view.findViewById(R.id.viewPagerImageSlider);
         List<SliderItem> sliderItems = new ArrayList<>();
-        sliderItems.add(new SliderItem(R.drawable.pawnpic, "Вернуться", "к последнему уроку", "Вперед!")); //продолжить урок
+        sliderItems.add(new SliderItem(R.drawable.pawnpic, "Вернуться", "к последнему действию", "Вперед!")); //продолжить урок
         sliderItems.add(new SliderItem(R.drawable.puzzle, "Задачи", "решение задач", "К задачам")); //решать задачи
 
         sliderItems.add(new SliderItem(R.drawable.debuts, "Дебюты", "изучаем первые ходы", "К дебютам!")); //дебюты

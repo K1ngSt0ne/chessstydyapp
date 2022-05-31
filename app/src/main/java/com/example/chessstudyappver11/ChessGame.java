@@ -44,7 +44,7 @@ public class ChessGame {
 
     {
         reset();
-        /*movePiece(4,1,4,2);//e3
+       /* movePiece(4,1,4,2);//e3
         movePiece(0,6,0,4);//a5
         movePiece(3,0,7,4);//Qh5
         movePiece(0,7,0,5);//Ra5
@@ -62,6 +62,32 @@ public class ChessGame {
         movePiece(3,2,7,6);//Qh7
         movePiece(1,7,2,7);//Qxc8
         movePiece(5,6,6,5);//Kg6*/
+        /**БЫстрейший пат без взятий*/
+
+      /* movePiece(3,1,3,3);//d4
+        movePiece(3,6,3,5);//d6
+        movePiece(3,0,3,1);//Qd2
+        movePiece(4,6,4,4);//e5
+        movePiece(0,1,0,3);//a4
+        movePiece(4,4,4,3);//e4
+        movePiece(3,1,5,3);//Qf4
+        movePiece(5,6,5,4);//f5
+        movePiece(7,1,7,2);//h3
+        movePiece(5,7,4,6);//Be7
+        movePiece(5,3,7,1);//Qh2
+        movePiece(2,7,4,5);//Be6
+        movePiece(0,0,0,2);//Ra3
+        movePiece(2,6,2,4);//c5
+        movePiece(0,2,6,2);//Rg3
+        movePiece(3,7,0,4);//Qa5+
+        movePiece(1,0,3,1);//Kd2
+        movePiece(4,6,7,3);//Bh4
+        movePiece(5,1,5,2);//f3
+        movePiece(4,5,1,2);//Bb3
+        movePiece(3,3,3,4);//d5
+        movePiece(4,3,4,2);//e3*/
+        //c4
+        //f4 - пат
     }
 
     public void clear() {
@@ -472,27 +498,6 @@ public class ChessGame {
 
     private boolean checkDraw()
     {
-        /*Ситуации, при которых возникает ничья:
-        1. На доске 2 короля (готово)
-        2. На доске 2 короля И слон (готово)
-        3. На доске 2 короля И конь (готово)
-        4. На доске 2 короля и 2  и более слона (если они одного цвета)
-        5. На доске пат (когда одна сторона сделала ход, а другой нет возможных ходов) (готово)
-        6. Правило 50 ходов - не взята ни одна фигура и не двинута ни одна пешка
-        7. Троекратное повторение позиции (здесь если позиция была, и затем она повторилась два раза подряд)
-        т.е.
-        если
-        Кре2 Кре7
-        Кре1 Кре8
-        ----какие-то ходы-------
-        Кре2 Кре7
-        Кре1 Кре8
-        Кре2 Кре7
-        Кре1 Кре8
-        то это ничья!
-        В независимоти от числа ходов!
-        т.е. нужно искать по последней существующей позиции (ну т.е. если позиция появилась 1 раз, потом прошло n число ходов и она потворилась дважды, то тогда бан)
-        * */
         if (pieceBoxSize()==2)
             return true;
         if (pieceBoxSize()==3)
@@ -505,7 +510,6 @@ public class ChessGame {
                     disadvantageResult=true;
                     return true;
                 }
-
             }
         }
         if (movesWithoutTakingFigure==100) // нужно проврить что пешки не ходили и фигуры не брались
@@ -530,7 +534,7 @@ public class ChessGame {
     private boolean checkStalemate() //проверка на пат
     {
         //впринципе надо юзать методы которые я использвал для проверки мата - поиска возможноных клеток
-        //ну разве что надо проверить не может ликак нибудь фигура ходить
+        //ну разве что надо проверить не может ли как нибудь фигура ходить
         //return checkMate(findEnemyKing(turnPlayer)); //добавить проверку attackPiece на null + пешки пофиксить
         ChessPiece kingPiece = findEnemyKing(turnPlayer);
         if (kingPiece.getChessman() == Chessman.KING) {
@@ -593,7 +597,7 @@ public class ChessGame {
         return false;
     }
 
-    private boolean canFigureMove()
+    private boolean canFigureMove() //недописано
     {
         Player currentPlayer=Player.WHITE;
         if (turnPlayer==Player.BLACK)
@@ -620,7 +624,7 @@ public class ChessGame {
                             {
                                 if (canPawnMove(depart,sq))
                                 {
-                                    ArrayList<ChessPiece> test =new ArrayList<ChessPiece>(piecesBox);
+                                    ArrayList<ChessPiece> copyPiecesBox =new ArrayList<ChessPiece>(piecesBox);
                                     ChessPiece remove_piece = pieceAt(depart);
                                     piecesBox.remove(remove_piece);
                                     remove_piece.setRow(sq.getRow());
@@ -635,7 +639,7 @@ public class ChessGame {
                                         piecesBox.add(chessPiece);
                                         return true;
                                     }
-                                   piecesBox=new ArrayList<>(test);
+                                   piecesBox=new ArrayList<>(copyPiecesBox);
                                 }
                             }
 
@@ -647,20 +651,44 @@ public class ChessGame {
                             pawn_moves.add(new Square(piece.getColumn()+1, piece.getRow()-1));
                             for (Square sq : pawn_moves)
                             {
-                                if ((canPawnMove(depart, new Square(piece.getColumn(), piece.getRow()+1)))||((canPawnMove(depart, new Square(piece.getColumn()-1, piece.getRow()+1)))||((canPawnMove(depart, new Square(piece.getColumn()+1, piece.getRow()+1))))))
-                                    if(!secondBoard(piecesBox))
+                                if (canPawnMove(depart,sq))
+                                {
+                                    ArrayList<ChessPiece> copyPiecesBox =new ArrayList<ChessPiece>(piecesBox);
+                                    ChessPiece remove_piece = pieceAt(depart);
+                                    piecesBox.remove(remove_piece);
+                                    remove_piece.setRow(sq.getRow());
+                                    remove_piece.setColumn(sq.getColumn());
+                                    piecesBox.add(remove_piece);
+                                    if(!checkAllFigure(turnPlayer, findEnemyKing(turnPlayer), piecesBox)) //делаем копию массива с фигурами и его прверяем
+                                    {
+                                        ChessPiece chessPiece = pieceAt(sq);
+                                        piecesBox.remove(chessPiece);
+                                        chessPiece.setColumn(depart.getColumn());
+                                        chessPiece.setRow(depart.getRow());
+                                        piecesBox.add(chessPiece);
                                         return true;
+                                    }
+                                    piecesBox=new ArrayList<>(copyPiecesBox);
+                                }
                             }
                         }
 
                         break;
                     case BISHOP:
+                        //проверка на то может ли пойти слон
+                        Log.d(TAG, "А тут будет проверка на возмжоность пойти слоном");
                         break;
                     case QUEEN:
+                        //проверка на то может ли пойти ферзь
+                        Log.d(TAG, "А тут будет проверка на возмжоность пойти ферзем");
                         break;
                     case ROOK:
+                        //проверка на то может ли пойти ладья
+                        Log.d(TAG, "А тут будет проверка на возмжоность пойти ладьей");
                         break;
                     case KNIGHT:
+                        //проверка на то может ли пойти конь
+                        Log.d(TAG, "А тут будет проверка на возмжоность пойти конем");
                         break;
                 }
             }
@@ -670,6 +698,22 @@ public class ChessGame {
 
     private boolean checkThreefoldMoves() //требует доработки
     {
+                /*Ситуации, при которых возникает ничья:
+
+        7. Троекратное повторение позиции (здесь если позиция была, и затем она повторилась два раза подряд)
+        т.е.
+        если
+        Кре2 Кре7
+        Кре1 Кре8
+        ----какие-то ходы-------
+        Кре2 Кре7
+        Кре1 Кре8
+        Кре2 Кре7
+        Кре1 Кре8
+        то это ничья!
+        В независимоти от числа ходов!
+        т.е. нужно искать по последней существующей позиции (ну т.е. если позиция появилась 1 раз, потом прошло n число ходов и она потворилась дважды, то тогда бан)
+        * */
         return false;
     }
 

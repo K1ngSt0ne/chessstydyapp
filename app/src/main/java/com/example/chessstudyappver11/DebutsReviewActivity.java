@@ -120,11 +120,6 @@ public class DebutsReviewActivity extends AppCompatActivity implements ChessDele
         ArrayList<Moves> debutsMoves; //создаем массив с ходами. В данный момент - хардкод
         ParsePGNotationToSquare pgn = new ParsePGNotationToSquare(listOfChosenDebuts.get(id_chosen_debut).getPgn());
         debutsMoves = pgn.loadMovesFromPGNToArray();
-        /*debutsMoves.add(new Moves(new Square(4,1), new Square(4,3)));
-        debutsMoves.add(new Moves(new Square(4,6), new Square(4,4)));
-        debutsMoves.add(new Moves(new Square(6,0), new Square(5,2)));
-        debutsMoves.add(new Moves(new Square(1,7), new Square(2,5)));
-        debutsMoves.add(new Moves(new Square(5,0), new Square(1,4)));*/
         return debutsMoves;
     }
 
