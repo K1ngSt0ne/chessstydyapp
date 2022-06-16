@@ -62,7 +62,7 @@ public class ParseSquareToNotationMoves {
         white_figure_literal.put(Chessman.BISHOP, "\u2657");
         white_figure_literal.put(Chessman.KNIGHT, "\u2658");
         white_figure_literal.put(Chessman.PAWN, "\u2659");
-        black_figure_literal.put(Chessman.KING, "\265A");
+        black_figure_literal.put(Chessman.KING, "\u265A");
         black_figure_literal.put(Chessman.QUEEN, "\u265B");
         black_figure_literal.put(Chessman.ROOK, "\u265C");
         black_figure_literal.put(Chessman.BISHOP, "\u265D");

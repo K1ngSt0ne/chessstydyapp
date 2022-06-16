@@ -107,21 +107,16 @@
         },
         {
           "id": "2",
-          "fen_pos": "1rr4k/pp1R2bb/5qp1/3B4/1n3PP1/2P2R1Q/PP5P/2K5 w - - 0 1",
-          "turns" : 5
-        },
-        {
-          "id": "3",
           "fen_pos": "2kr1b1r/pp1n1ppp/2p2nb1/8/N1Bq1B1N/5Q2/PPP2PPP/R3R1K1 w - - 0 1",
           "turns" : 3
         },
         {
-          "id": "4",
+          "id": "3",
           "fen_pos": "1k6/1pp5/7p/4Q1p1/pR4N1/P2r1P2/KP4PP/3q4 b - - 0 1",
           "turns" : 5
         },
         {
-          "id": "5",
+          "id": "4",
           "fen_pos": "5r1k/ppp2p1r/3p2pP/8/qn2P1NQ/3P4/1PP3P1/2K2R1R w - - 0 1",
           "turns" : 9
         }

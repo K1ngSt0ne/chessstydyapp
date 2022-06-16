@@ -4,10 +4,12 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -208,5 +210,12 @@ public class PlayBoardActivity extends AppCompatActivity implements ChessDelegat
         white_resID.put("Ладья",R.drawable.white_rook);
         white_resID.put("Ферзь", R.drawable.white_queen);
 
+    }
+
+    public void returnMainScreen(View v)
+    {
+        Intent intent = new Intent(PlayBoardActivity.this, MainActivity.class);
+        startActivity(intent);
+        finish();
     }
 }

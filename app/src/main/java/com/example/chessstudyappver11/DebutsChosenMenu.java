@@ -20,7 +20,7 @@ public class DebutsChosenMenu extends AppCompatActivity {
         //убираем actionBar (верхнюю  плашку)
         ActionBar actionBar = getSupportActionBar();
         actionBar.hide();
-        //банлд нам необходим что бы узнать, какой из предыдщих жлемента меню был выбран (открытый, закрытый или полуоткрытый дебют)
+        //бандл нам необходим что бы узнать, какой из предыдщих жлемента меню был выбран (открытый, закрытый или полуоткрытый дебют)
         Bundle arguments = getIntent().getExtras();
         //загружаем в массив список дебютов
         initArrayListChosenDebuts(arguments);
@@ -46,6 +46,7 @@ public class DebutsChosenMenu extends AppCompatActivity {
     {
         //получаем выбранную тему
         String name = args.get("chosen_type_debuts").toString();
+        debutsListChosen.clear();
         switch (name)
         {
             case "open":
@@ -65,6 +66,7 @@ public class DebutsChosenMenu extends AppCompatActivity {
                 debutsListChosen.add(new TopicLesson("Славянская защита","1. d2-d4 d7-d5 2. c2-c4 с7-с6", R.drawable.chess_free_png_image));
                 debutsListChosen.add(new TopicLesson("Защита Нимцовича","1. d2-d4 Kg8-f6 2.c2-c4 e7-e6\n3. Kb1-c3 Cf8-b4", R.drawable.chess_free_png_image));
                 debutsListChosen.add(new TopicLesson("Староиндийская защита","1. d2-d4 Kg8-f6 2. c2-c4 g7-g6\n3. Kb1-c3 Cf8-g7", R.drawable.chess_free_png_image));
+                break;
             case "subopen":
                 debutsListChosen.add(new TopicLesson("Сицилианская защита","1. e2-e4 c7-c5", R.drawable.chess_free_png_image));
                 debutsListChosen.add(new TopicLesson("Защита Каро-Канн","1. e2-e4 c7-c6", R.drawable.chess_free_png_image));

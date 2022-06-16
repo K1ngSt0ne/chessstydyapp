@@ -4,16 +4,16 @@
     <item
         android:id="@+id/navigation_home"
         android:icon="@drawable/baseline_list_black_24dp"
-        android:title="Menu" />
+        android:title="Меню" />
 
     <item
         android:id="@+id/navigation_statistic"
         android:icon="@drawable/baseline_signal_cellular_alt_black_24dp"
-        android:title="Statistic" />
+        android:title="Статистика" />
 
     <item
         android:id="@+id/navigation_exit"
         android:icon="@drawable/baseline_cancel_black_24dp"
-        android:title="Exit" />
+        android:title="Выход" />
 
 </menu>
