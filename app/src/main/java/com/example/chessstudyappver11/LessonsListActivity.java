@@ -67,10 +67,8 @@ public class LessonsListActivity extends AppCompatActivity {
                 listLessons.add(new TopicLesson("Правило 50 ходов", "Правило, которое позволяет сделать ничью", R.drawable.chess_free_png_image));
                 break;
             case "chess_tactic":
-                listLessons.add(new TopicLesson("О тактие в целом", "В общих словах - для чего этого и зачем", R.drawable.chess_free_png_image));
+                listLessons.add(new TopicLesson("О тактике в целом", "В общих словах - для чего этого и зачем", R.drawable.chess_free_png_image));
                 listLessons.add(new TopicLesson("Двойной удар", "Самое страшное оружие в руках шахматиста", R.drawable.chess_free_png_image));
-                listLessons.add(new TopicLesson("Вскрытое нападение", "Делаем 'рентген' на противника", R.drawable.chess_free_png_image));
-                listLessons.add(new TopicLesson("Вскрытый шах", "Нападение на короля из-за угла", R.drawable.chess_free_png_image));
                 listLessons.add(new TopicLesson("Завлечение", "Заманиваем фигуру на неудобное поле", R.drawable.chess_free_png_image));
                 listLessons.add(new TopicLesson("Отвлечение", "Отвлекаем вражескую фигуру ради достижения цели", R.drawable.chess_free_png_image));
                 listLessons.add(new TopicLesson("Уничтожение защиты", "Добираемся до фигур противника", R.drawable.chess_free_png_image));
@@ -82,9 +80,6 @@ public class LessonsListActivity extends AppCompatActivity {
                 listLessons.add(new TopicLesson("О стратегии в целом", "В общих словах зачем это нужно", R.drawable.chess_free_png_image));
                 listLessons.add(new TopicLesson("Пешечные цепи", "Что это такое и для чего оно нужно", R.drawable.chess_free_png_image));
                 listLessons.add(new TopicLesson("Пешечные структуры", "Какие пешечные структуры бывают и что дают", R.drawable.chess_free_png_image));
-                listLessons.add(new TopicLesson("Пространство", "Важный ресурс шахмат наравне с фигурами", R.drawable.chess_free_png_image));
-                listLessons.add(new TopicLesson("Тип позиции", "Узнаем какие есть позиции и их особенности", R.drawable.chess_free_png_image));
-                listLessons.add(new TopicLesson("Когда разменивать фигуры", "Брать или не брать - вот в чем вопрос...", R.drawable.chess_free_png_image));
                 break;
         }
     }
@@ -127,10 +122,8 @@ public class LessonsListActivity extends AppCompatActivity {
         lessonsDict.put("Взятие на проходе", "en_passan.html");
         lessonsDict.put("Правило 50 ходов", "fifteen_moves.html");
 
-        lessonsDict.put("О тактие в целом", "about_tactics.html");
+        lessonsDict.put("О тактике в целом", "about_tactics.html");
         lessonsDict.put("Двойной удар", "double_strike.html");
-        lessonsDict.put("Вскрытое нападение", "open_attack.html");
-        lessonsDict.put("Вскрытый шах", "open_check.html");
         lessonsDict.put("Завлечение", "enticement.html");
         lessonsDict.put("Отвлечение", "distraction.html");
         lessonsDict.put("Уничтожение защиты", "destroy_defence.html");
@@ -141,8 +134,5 @@ public class LessonsListActivity extends AppCompatActivity {
         lessonsDict.put("О стратегии в целом", "about_strategy.html");
         lessonsDict.put("Пешечные цепи", "pawn_chains.html");
         lessonsDict.put("Пешечные структуры", "pawns_structure.html" );
-        lessonsDict.put("Пространство", "free_space.html" );
-        lessonsDict.put("Тип позиции", "type_position.html" );
-        lessonsDict.put("Когда разменивать фигуры", "when_exchange_figure.html");
     }
 }

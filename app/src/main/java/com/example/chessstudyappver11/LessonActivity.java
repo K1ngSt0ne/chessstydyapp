@@ -41,7 +41,7 @@ public class LessonActivity extends AppCompatActivity {
         SharedPreferences.Editor prefEditor = settings.edit();
         prefEditor.putString("lastLesson",name);
         prefEditor.putString("lastActivity","lessonActivity");
-        prefEditor.putString("topicNameValue", arguments.get("topicName").toString());
+        prefEditor.putString("topicNameValue", topicName);
         prefEditor.apply();
     }
 
