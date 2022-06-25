@@ -34,9 +34,9 @@ public class TasksMenuActivity extends AppCompatActivity {
     }
     void setTaskType()
     {
-        taskList.add(new TopicLesson("Мат в 1 ход", "Решение задач, где нужно посавить мат за 1 ход", R.drawable.chess_free_png_image));
-        taskList.add(new TopicLesson("Мат в 2 хода", "Решение задач, где нужно посавить мат за 2 хода", R.drawable.chess_free_png_image));
-        taskList.add(new TopicLesson("Мат в 3 хода", "Решение задач, где нужно посавить мат за 3 хода", R.drawable.chess_free_png_image));
+        taskList.add(new TopicLesson("Мат в 1 ход", "Решение задач, где нужно поставить мат за 1 ход", R.drawable.chess_free_png_image));
+        taskList.add(new TopicLesson("Мат в 2 хода", "Решение задач, где нужно поставить мат за 2 хода", R.drawable.chess_free_png_image));
+        taskList.add(new TopicLesson("Мат в 3 хода", "Решение задач, где нужно поставить мат за 3 хода", R.drawable.chess_free_png_image));
         taskList.add(new TopicLesson("Мат ладьей и конем", "Решение задач, где нужно поставить мат ладьей и конем", R.drawable.chess_free_png_image));
         taskList.add(new TopicLesson("Мат с жертвой фигуры", "Решение задач, где нужно поставить мат, пожертвовав фигуру", R.drawable.chess_free_png_image));
     }
